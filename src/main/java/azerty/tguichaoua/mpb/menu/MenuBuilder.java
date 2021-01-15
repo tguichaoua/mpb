@@ -35,6 +35,12 @@ public abstract class MenuBuilder {
 
 	protected abstract void render(MenuRenderer renderer);
 
+	/**
+	 * Called when the menu is re-open after a back action, before {@link #render(MenuRenderer)} is called.
+	 */
+	protected void onReopen() {
+	}
+
 	public Menu display(@NotNull final Plugin plugin, @NotNull final Player player, final int rowCount) {
 		return Menu.display(plugin, player, this, rowCount);
 	}
