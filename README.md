@@ -1,8 +1,7 @@
-# mpb
-> A Minecraft plugin bootstrap library
-
 [![Release](https://jitpack.io/v/tguichaoua/mpb.svg)](https://jitpack.io/#tguichaoua/mbp)
 
+# mpb
+> A Minecraft plugin bootstrap library
 
 [javadoc](https://jitpack.io/com/github/tguichaoua/mpb/latest/javadoc/)
 
