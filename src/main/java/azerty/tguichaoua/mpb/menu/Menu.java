@@ -197,6 +197,7 @@ public final class Menu {
 			if (!isCurrent) return;
 			isCurrent = false;
 			raiseOnClose();
+			previousMenu.builder.onReopen();
 			previousMenu.render();
 			previousMenu.open();
 		}
