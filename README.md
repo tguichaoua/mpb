@@ -1,9 +1,16 @@
+# Minecraft Plugin Bootstrap
+
 [![Release](https://jitpack.io/v/tguichaoua/mpb.svg)](https://jitpack.io/#tguichaoua/mbp)
 
-# mpb
-> A Minecraft plugin bootstrap library
+## Features
 
-[javadoc](https://jitpack.io/com/github/tguichaoua/mpb/latest/javadoc/)
+- Shortcut/util methods for plugin
+- Command handler
+- Inventory based menu
+
+## Docs
+
+- [javadoc](https://jitpack.io/com/github/tguichaoua/mpb/latest/javadoc/)
 
 ## Maven depencency
 
@@ -45,3 +52,22 @@
     </plugins>
 </build>
 ```
+
+## Author
+
+👤 **Tristan Guichaoua**
+
+-   Github: [@tguichaoua](https://github.com/tguichaoua)
+
+## 🤝 Contributing
+
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/tguichaoua/mpb/issues).
+
+## Show your support
+
+Give a ⭐️ if this project helped you!
+
+## 📝 License
+
+Copyright © 2021 [Tristan Guichaoua](https://github.com/tguichaoua).<br />
+This project is [MIT](https://github.com/tguichaoua/mpb/blob/main/LICENSE) licensed.
