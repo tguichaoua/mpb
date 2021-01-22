@@ -32,7 +32,7 @@ public final class MenuListener implements Listener {
 		menu.handleMenuClose(event);
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	private void onMenuClick(final InventoryClickEvent event) {
 		if (!(event.getWhoClicked() instanceof Player)) return;
 
