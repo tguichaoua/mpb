@@ -74,7 +74,7 @@ public final class Menu {
 		rowCount = MathUtils.clamp(rowCount, 1, MAX_ROW_COUNT);
 		final Menu menu = new Menu(
 				plugin, player, builder, rowCount,
-				render(player, builder, rowCount),
+				render(plugin, player, builder, rowCount),
 				previousMenu, true
 		);
 		menu.open();
@@ -83,9 +83,16 @@ public final class Menu {
 	}
 
 	private static @NotNull
-	RenderedMenu render(final Player viewer, final MenuBuilder builder, final int rowCount) {
+	RenderedMenu render(final Plugin plugin, final Player viewer, final MenuBuilder builder, final int rowCount) {
 		final MenuRenderer.Main renderer = new MenuRenderer.Main(new MenuRegion(0, 0, 9, rowCount), viewer);
-		builder.render(renderer);
+
+		try {
+			builder.render(renderer);
+		} catch (final Throwable t) {
+			plugin.getLogger().severe("An error occurs while trying to render a menu.");
+			t.printStackTrace();
+			renderer.clear();
+		}
 
 		final String title = renderer.getTitle();
 		final Inventory inventory = Bukkit.createInventory(
@@ -112,7 +119,7 @@ public final class Menu {
 	}
 
 	private void render() {
-		rendered = render(viewer, builder, rowCount);
+		rendered = render(plugin, viewer, builder, rowCount);
 	}
 
 	private void detach() {
