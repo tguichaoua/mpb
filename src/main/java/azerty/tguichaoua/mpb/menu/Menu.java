@@ -133,6 +133,7 @@ public final class Menu {
 			try {
 				cb.accept(closeEvent);
 			} catch (final Throwable t) {
+				plugin.getLogger().severe("An error occurs while trying to handle onClose event.");
 				t.printStackTrace();
 			}
 		});
@@ -152,6 +153,7 @@ public final class Menu {
 			try {
 				action.accept(new ButtonClickEvent(this, clickType));
 			} catch (final Throwable t) {
+				plugin.getLogger().severe("An error occurs while trying to handle an click.");
 				t.printStackTrace();
 			}
 		}
