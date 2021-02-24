@@ -189,6 +189,13 @@ public abstract class MenuRenderer {
 			super(region, viewer);
 		}
 
+		public void clear() {
+			isItemSlots.clear();
+			items.clear();
+			actions.clear();
+			onCloseCallbacks.clear();
+		}
+
 		@Override
 		public void onClose(final Menu.@NotNull OnClose onClose) {
 			this.onCloseCallbacks.add(onClose);
