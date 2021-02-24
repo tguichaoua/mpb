@@ -122,7 +122,13 @@ public final class Menu {
 
 	private void raiseOnClose() {
 		final CloseEvent closeEvent = new CloseEvent(this);
-		rendered.onCloseCallbacks.forEach(cb -> cb.accept(closeEvent));
+		rendered.onCloseCallbacks.forEach(cb -> {
+			try {
+				cb.accept(closeEvent);
+			} catch (final Throwable t) {
+				t.printStackTrace();
+			}
+		});
 	}
 
 	// --- Event Handlers ---------------------------------------------------------
@@ -135,7 +141,13 @@ public final class Menu {
 
 	void handleClick(final int slot, @NotNull final ClickType clickType) {
 		final ButtonAction action = rendered.buttonActions.get(slot);
-		if (action != null) action.accept(new ButtonClickEvent(this, clickType));
+		if (action != null) {
+			try {
+				action.accept(new ButtonClickEvent(this, clickType));
+			} catch (final Throwable t) {
+				t.printStackTrace();
+			}
+		}
 	}
 
 	void handleClickOutside() {
