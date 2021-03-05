@@ -15,8 +15,8 @@ public abstract class MyPlugin extends JavaPlugin implements Listener {
 
 	@Override
 	public final void onEnable() {
-		registerEvent(this);
-		registerEvent(new MenuListener(this));
+		registerEvents(this);
+		registerEvents(new MenuListener(this));
 		onPluginStart();
 	}
 
@@ -25,13 +25,28 @@ public abstract class MyPlugin extends JavaPlugin implements Listener {
 		onPluginStop();
 	}
 
-	protected void onPluginLoad() { }
-	protected void onPluginStart() { }
-	protected void onPluginStop() { }
+	protected void onPluginLoad() {
+	}
+
+	protected void onPluginStart() {
+	}
+
+	protected void onPluginStop() {
+	}
 
 	// Utils
+
+	/**
+	 * @deprecated use {@link MyPlugin#registerEvents(Listener)} instead
+	 */
+	@Deprecated
 	public final void registerEvent(final Listener listener) {
 		getServer().getPluginManager().registerEvents(listener, this);
+	}
+
+	public final <T extends Listener> T registerEvents(final T listener) {
+		getServer().getPluginManager().registerEvents(listener, this);
+		return listener;
 	}
 
 	public final File getDataFolder(final String child) {
