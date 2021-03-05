@@ -40,8 +40,7 @@ public final class LineListLayout<T> extends AbstractListLayout<T> {
 		for (int i = 0, ii = getItemPerPage(); i < ii; i++) {
 			final int idx = getIndexOffset() + i;
 			if (idx >= getList().size()) break;
-			final MenuRegion region = renderer.getRegion().line(direction, i);
-			lineRenderer.render(renderer.render(region), getList().get(idx), idx, i);
+			lineRenderer.render(renderer.ofLine(direction, i), getList().get(idx), idx, i);
 		}
 	}
 

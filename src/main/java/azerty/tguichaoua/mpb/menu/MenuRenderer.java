@@ -136,15 +136,27 @@ public abstract class MenuRenderer {
 		fillItem(region, (ItemStack) null);
 	}
 
+	/**
+	 * @deprecated use {@link MenuRenderer#of(MenuRegion)} instead.
+	 */
+	@Deprecated
 	public final MenuRenderer render(@NotNull final MenuRegion region) {
 		if (!this.region.contains(region)) throw new MenuRenderException(MenuRenderException.OUT_OF_REGION);
 		return new Proxy(region, this);
 	}
 
+	/**
+	 * @deprecated use {@link MenuRenderer#of(int, int, int, int)} instead.
+	 */
+	@Deprecated
 	public final MenuRenderer render(final int fromX, final int fromY, final int toX, final int toY) {
 		return new Proxy(region.subRegion(fromX, fromY, toX, toY), this);
 	}
-	
+
+	/**
+	 * @deprecated use {@link MenuRenderer#of(Alignment, int, int)} instead.
+	 */
+	@Deprecated
 	public final MenuRenderer render(@NotNull final Alignment alignment, final int width, final int height) {
 		return new Proxy(region.subRegion(alignment, width, height), this);
 	}
@@ -156,9 +168,42 @@ public abstract class MenuRenderer {
 	}
 
 	public final Data render(final @NotNull MenuBuilder builder, final @NotNull MenuRegion region) {
-		final MenuRenderer proxy = render(region);
+		final MenuRenderer proxy = of(region);
 		builder.render(proxy);
 		return Data.of(proxy);
+	}
+
+	public final MenuRenderer of(@NotNull final MenuRegion region) {
+		if (!this.region.contains(region)) throw new MenuRenderException(MenuRenderException.OUT_OF_REGION);
+		return new Proxy(region, this);
+	}
+
+	public final MenuRenderer of(final int fromX, final int fromY, final int toX, final int toY) {
+		return new Proxy(region.subRegion(fromX, fromY, toX, toY), this);
+	}
+
+	public final MenuRenderer of(@NotNull final Alignment alignment, final int width, final int height) {
+		return new Proxy(region.subRegion(alignment, width, height), this);
+	}
+
+	public final MenuRenderer ofRow(final int from, final int to) {
+		return new Proxy(region.row(from, to), this);
+	}
+
+	public final MenuRenderer ofRow(final int row) {
+		return new Proxy(region.row(row), this);
+	}
+
+	public final MenuRenderer ofColumn(final int from, final int to) {
+		return new Proxy(region.column(from, to), this);
+	}
+
+	public final MenuRenderer ofColumn(final int column) {
+		return new Proxy(region.column(column), this);
+	}
+
+	public final MenuRenderer ofLine(final Direction direction, final int i) {
+		return new Proxy(region.line(direction, i), this);
 	}
 
 	// --- Private Class --------------------------------------------------------------------------------
