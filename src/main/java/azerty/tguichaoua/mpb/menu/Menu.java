@@ -26,19 +26,18 @@ import java.util.function.Consumer;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Menu {
 
-	private static final String EXCEPTION_NOT_CURRENT = "The menu must be the current to preform this action.";
+	private static final String EXCEPTION_NOT_CURRENT = "This menu must be the current one to preform this action.";
 
 	static final String CURRENT_MENU_TAG = Constants.DOMAIN + "CURRENT_MENU";
 	public static final int MAX_ROW_COUNT = 6;
 
 	private final Plugin plugin;
-	@Getter	private final Player viewer;
+	@Getter private final Player viewer;
 	private final MenuBuilder builder;
 	private final int rowCount;
 	private @NotNull RenderedMenu rendered;
 
-	private @Nullable
-	final Menu previousMenu;
+	private final @Nullable Menu previousMenu;
 	private boolean isCurrent;
 
 	static @Nullable Menu getMenu(final @NotNull Plugin plugin, final @NotNull Player player) {
@@ -82,8 +81,7 @@ public final class Menu {
 		return menu;
 	}
 
-	private static @NotNull
-	RenderedMenu render(final Plugin plugin, final Player viewer, final MenuBuilder builder, final int rowCount) {
+	private static @NotNull RenderedMenu render(final Plugin plugin, final Player viewer, final MenuBuilder builder, final int rowCount) {
 		final MenuRenderer.Main renderer = new MenuRenderer.Main(new MenuRegion(0, 0, 9, rowCount), viewer);
 
 		try {
@@ -240,9 +238,10 @@ public final class Menu {
 
 	/**
 	 * Gets the slot index based on its row and column position (zero based).
-	 * Warning : {@code row} must be between {@literal 0} and {@literal 8} (include) and {@code column}
-	 * must be between {@literal 0} and {@code rowCount}, or the result value will not be accurate.
-	 * @param row the row of the slot
+	 * Warning : {@code row} must be between {@code 0} and {@code 8} (include) and {@code column}
+	 * must be between {@code 0} and {@link Menu#MAX_ROW_COUNT}, or the result value will not be accurate.
+	 *
+	 * @param row    the row of the slot
 	 * @param column the column of the slot
 	 * @return the slot index
 	 */

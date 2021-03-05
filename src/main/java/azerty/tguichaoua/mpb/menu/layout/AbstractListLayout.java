@@ -88,11 +88,12 @@ public abstract class AbstractListLayout<T> {
 
 	protected abstract int getItemPerPage(MenuRegion region);
 
-	protected abstract void fill(final MenuRenderer renderer);
+	protected abstract void fill(MenuRenderer renderer);
 
 	// --- Data interfaces / classes ---------------------------------------------------------------
 	public interface ElementProvider<T> {
 		T get(int i);
+
 		int size();
 
 		static <T> ElementProvider<T> of(final List<T> list) {
