@@ -238,9 +238,10 @@ public final class Menu {
 
 	/**
 	 * Gets the slot index based on its row and column position (zero based).
-	 * Warning : {@code row} must be between {@literal 0} and {@literal 8} (include) and {@code column}
-	 * must be between {@literal 0} and {@code rowCount}, or the result value will not be accurate.
-	 * @param row the row of the slot
+	 * Warning : {@code row} must be between {@code 0} and {@code 8} (include) and {@code column}
+	 * must be between {@code 0} and {@link Menu#MAX_ROW_COUNT}, or the result value will not be accurate.
+	 *
+	 * @param row    the row of the slot
 	 * @param column the column of the slot
 	 * @return the slot index
 	 */
