@@ -50,7 +50,7 @@ public final class TabMenu extends MenuBuilder {
 		renderer.requireSpace(3, 3);
 
 		// Render the tab header
-		final MenuRenderer tabMenuRenderer = renderer.render(1, 0, -2, 0);
+		final MenuRenderer tabMenuRenderer = renderer.of(1, 0, -2, 0);
 		tabLayout.render(tabMenuRenderer);
 
 		if (tabLayout.hasPreviousPage())

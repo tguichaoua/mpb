@@ -52,7 +52,7 @@ public final class ListMenu<T> extends MenuBuilder {
 	protected void render(final MenuRenderer renderer) throws MenuRenderException {
 		renderer.requireSpace(3, 2);
 
-		listLayout.render(renderer.render(
+		listLayout.render(renderer.of(
 				buttonBarPosition == Direction.LEFT ? 1 : 0,
 				buttonBarPosition == Direction.UP ? 1 : 0,
 				buttonBarPosition == Direction.RIGHT ? -2 : -1,
@@ -75,7 +75,7 @@ public final class ListMenu<T> extends MenuBuilder {
 						)
 		);
 
-		final MenuRenderer buttonBarRenderer = renderer.render(renderer.getRegion().line(buttonBarPosition, -1));
+		final MenuRenderer buttonBarRenderer = renderer.ofLine(buttonBarPosition, -1);
 
 		if (listLayout.hasPreviousPage()) buttonBarRenderer.set(0, 0, PREVIOUS_PAGE_BUTTON, listLayout::previousPageButton);
 		if (listLayout.hasNextPage()) buttonBarRenderer.set(-1, -1, NEXT_PAGE_BUTTON, listLayout::nextPageButton);
