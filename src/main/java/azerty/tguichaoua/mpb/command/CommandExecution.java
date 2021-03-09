@@ -84,16 +84,16 @@ public final class CommandExecution {
 		currentArg++;
 	}
 
-	public <T> T get(final CommandArgument<T> parser) throws CommandException {
-		return parser.parse(this);
-	}
-
 	public void next(final int count) throws CommandException {
 		currentArg += count;
 		if (currentArg >= args.length) {
 			currentArg = args.length;
 			throw new CommandException(CommandException.Type.MISSING_ARGUMENT, this);
 		}
+	}
+
+	public <T> T get(final CommandArgument<T> parser) throws CommandException {
+		return parser.parse(this);
 	}
 
 	public String nextString() throws CommandException {
