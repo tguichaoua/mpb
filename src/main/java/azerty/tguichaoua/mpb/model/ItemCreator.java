@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-@Builder
+@Builder(builderClassName = "Builder")
 final public class ItemCreator {
 
 	/**
@@ -31,7 +31,7 @@ final public class ItemCreator {
 	/**
 	 * The amount of the item
 	 */
-	@Builder.Default
+	@lombok.Builder.Default
 	private final int amount = 1;
 
 	/**
@@ -136,38 +136,38 @@ final public class ItemCreator {
 		return stack;
 	}
 
-	public static ItemCreatorBuilder of(final Material material) {
+	public static Builder of(final Material material) {
 		return builder().material(material);
 	}
 
-	public static ItemCreatorBuilder of(final Material material, final String name, final Collection<String> lore) {
+	public static Builder of(final Material material, final String name, final Collection<String> lore) {
 		return builder().material(material).name(name).lores(lore);
 	}
 
-	public static ItemCreatorBuilder of(final Material material, final String name, final String... lore) {
+	public static Builder of(final Material material, final String name, final String... lore) {
 		return of(material, name, Arrays.asList(lore));
 	}
 
-	public static ItemCreatorBuilder of(final OfflinePlayer player) {
+	public static Builder of(final OfflinePlayer player) {
 		return of(Material.PLAYER_HEAD).headPlayerOwner(player);
 	}
 
-	public static ItemCreatorBuilder of(final UUID playerUUID) {
+	public static Builder of(final UUID playerUUID) {
 		return of(Bukkit.getOfflinePlayer(playerUUID));
 	}
 
-	public static ItemCreatorBuilder ofHead(final String base64) {
+	public static Builder ofHead(final String base64) {
 		return of(Material.PLAYER_HEAD).headBase64(base64);
 	}
 
-	public static ItemCreatorBuilder ofHead(final String base64, final String name, final Collection<String> lore) {
+	public static Builder ofHead(final String base64, final String name, final Collection<String> lore) {
 		return of(Material.PLAYER_HEAD).headBase64(base64).name(name).lores(lore);
 	}
 
-	public static ItemCreatorBuilder ofHead(final String base64, final String name, final String... lore) {
+	public static Builder ofHead(final String base64, final String name, final String... lore) {
 		return ofHead(base64, name, Arrays.asList(lore));
 	}
 
 	// must be kept to avoid javadoc warning
-	public static class ItemCreatorBuilder { }
+	public static class Builder { }
 }
