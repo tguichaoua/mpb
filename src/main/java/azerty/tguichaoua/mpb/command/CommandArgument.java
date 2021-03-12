@@ -50,7 +50,7 @@ public interface CommandArgument<T> {
 	}
 
 	static ListedCommandArgument<String> of(@NotNull final Collection<String> values) {
-		return new ListedCommandArgument<>(values, s -> s);
+		return new ListedCommandArgument<>(values::stream, s -> s);
 	}
 
 	static ListedCommandArgument<String> of(final String... values) {
@@ -58,15 +58,16 @@ public interface CommandArgument<T> {
 	}
 
 	static <T> ListedCommandArgument<T> of(@NotNull final Map<String, T> map) {
-		return new ListedCommandArgument<>(map.keySet(), map::get);
+		return new ListedCommandArgument<>(() -> map.keySet().stream(), map::get);
 	}
 
 	static <E extends Enum<E>> ListedCommandArgument<E> of(@NotNull final Class<E> clazz, @NotNull final Predicate<E> predicate) {
+		final List<String> values = Arrays.stream(clazz.getEnumConstants())
+				.filter(predicate)
+				.map(Enum::name)
+				.collect(Collectors.toList());
 		return new ListedCommandArgument<>(
-				Arrays.stream(clazz.getEnumConstants())
-						.filter(predicate)
-						.map(Enum::name)
-						.collect(Collectors.toList()),
+				values::stream,
 				s -> Enum.valueOf(clazz, s)
 		);
 	}
@@ -147,17 +148,11 @@ public interface CommandArgument<T> {
 	ListedCommandArgument<Statistic> STATISTIC = of(Statistic.class);
 
 	// -- Misc
-	CommandArgument<@Nullable Player> ONLINE_PLAYER =
-			new CommandArgument<@Nullable Player>() {
-				@Override public @Nullable Player parse(final @NotNull CommandExecution execution) throws CommandException {
-					return Bukkit.getServer().getPlayerExact(execution.nextString());
-				}
-
-				@Override public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
-					execution.next();
-					return Bukkit.getServer().getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
-				}
-			};
+	ListedCommandArgument<@Nullable Player> ONLINE_PLAYER =
+			new ListedCommandArgument<@Nullable Player>(
+					() -> Bukkit.getServer().getOnlinePlayers().stream().map(HumanEntity::getName),
+					s -> Bukkit.getServer().getPlayerExact(s)
+			);
 
 	CommandArgument<Location> LOCATION =
 			new CommandArgument<Location>() {
