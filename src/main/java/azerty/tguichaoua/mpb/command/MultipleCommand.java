@@ -57,11 +57,11 @@ public final class MultipleCommand extends MyCommand {
 	}
 
 	// --- BUILDER -----------------------------
-	public static Builder make(final SingleCommand command) {
+	public static Builder builder(final SingleCommand command) {
 		return new Builder(command);
 	}
 
-	public static Builder make() {
+	public static Builder builder() {
 		return new Builder(null);
 	}
 
