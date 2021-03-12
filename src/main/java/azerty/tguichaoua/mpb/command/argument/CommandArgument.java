@@ -44,6 +44,17 @@ public interface CommandArgument<T> {
 		});
 	}
 
+	default CommandArgument<T> defaultValue(final T defaultValue) {
+		return new ProxyCommandArgument<T, T>(this) {
+			@Override public T parse(@NotNull final CommandExecution execution) throws CommandException {
+				if (execution.remains() == 0)
+					return defaultValue;
+				else
+					return source.parse(execution);
+			}
+		};
+	}
+
 	static ListedCommandArgument<String> of(@NotNull final Collection<String> values) {
 		return new ListedCommandArgument<>(values::stream, s -> s);
 	}
@@ -144,7 +155,7 @@ public interface CommandArgument<T> {
 
 	// -- Misc
 	ListedCommandArgument<@Nullable Player> ONLINE_PLAYER =
-			new ListedCommandArgument<@Nullable Player>(
+			new ListedCommandArgument<>(
 					() -> Bukkit.getServer().getOnlinePlayers().stream().map(HumanEntity::getName),
 					s -> Bukkit.getServer().getPlayerExact(s)
 			);
