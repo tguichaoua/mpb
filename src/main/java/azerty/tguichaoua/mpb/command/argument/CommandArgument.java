@@ -1,5 +1,7 @@
-package azerty.tguichaoua.mpb.command;
+package azerty.tguichaoua.mpb.command.argument;
 
+import azerty.tguichaoua.mpb.command.CommandException;
+import azerty.tguichaoua.mpb.command.CommandExecution;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;

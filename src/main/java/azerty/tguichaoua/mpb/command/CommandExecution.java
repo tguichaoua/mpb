@@ -1,5 +1,6 @@
 package azerty.tguichaoua.mpb.command;
 
+import azerty.tguichaoua.mpb.command.argument.CommandArgument;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.Location;

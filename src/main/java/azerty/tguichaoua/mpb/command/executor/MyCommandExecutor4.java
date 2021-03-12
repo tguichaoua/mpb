@@ -1,8 +1,8 @@
 package azerty.tguichaoua.mpb.command.executor;
 
-import azerty.tguichaoua.mpb.command.CommandArgument;
 import azerty.tguichaoua.mpb.command.CommandException;
 import azerty.tguichaoua.mpb.command.CommandExecution;
+import azerty.tguichaoua.mpb.command.argument.CommandArgument;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface

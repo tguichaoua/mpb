@@ -1,5 +1,7 @@
-package azerty.tguichaoua.mpb.command;
+package azerty.tguichaoua.mpb.command.argument;
 
+import azerty.tguichaoua.mpb.command.CommandException;
+import azerty.tguichaoua.mpb.command.CommandExecution;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
