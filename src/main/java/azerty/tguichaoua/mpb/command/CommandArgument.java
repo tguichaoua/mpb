@@ -49,76 +49,29 @@ public interface CommandArgument<T> {
 		};
 	}
 
-	static CommandArgument<String> of(@NotNull final Collection<String> values) {
-		return new CommandArgument<String>() {
-			@Override
-			public String parse(final @NotNull CommandExecution execution) throws CommandException {
-				final String arg = execution.nextString();
-				if (values.contains(arg))
-					return arg;
-				else
-					throw execution.invalidArgument();
-			}
-
-			@Override
-			public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
-				execution.next();
-				return values;
-			}
-		};
+	static ListedCommandArgument<String> of(@NotNull final Collection<String> values) {
+		return new ListedCommandArgument<>(values, s -> s);
 	}
 
-	static CommandArgument<String> of(final String... values) {
+	static ListedCommandArgument<String> of(final String... values) {
 		return of(Arrays.asList(values));
 	}
 
-	static <T> CommandArgument<T> of(@NotNull final Map<String, T> map) {
-		return new CommandArgument<T>() {
-			@Override
-			public T parse(final @NotNull CommandExecution execution) throws CommandException {
-				final String key = execution.nextString();
-				if (map.containsKey(key)) {
-					return map.get(key);
-				} else {
-					throw execution.invalidArgument();
-				}
-			}
-
-			@Override
-			public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
-				execution.next();
-				return map.keySet();
-			}
-		};
+	static <T> ListedCommandArgument<T> of(@NotNull final Map<String, T> map) {
+		return new ListedCommandArgument<>(map.keySet(), map::get);
 	}
 
-	static <E extends Enum<E>> CommandArgument<E> of(@NotNull final Class<E> clazz, @NotNull final Predicate<E> predicate) {
-		final Collection<String> values = Arrays.stream(clazz.getEnumConstants())
-				.filter(predicate)
-				.map(Enum::name)
-				.collect(Collectors.toList());
-
-		return new CommandArgument<E>() {
-			@Override
-			public E parse(final @NotNull CommandExecution execution) throws CommandException {
-				try {
-					final E e = Enum.valueOf(clazz, execution.nextString());
-					if (!predicate.test(e)) throw execution.invalidArgument();
-					return e;
-				} catch (final IllegalArgumentException e) {
-					throw execution.invalidArgument();
-				}
-			}
-
-			@Override
-			public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
-				execution.next();
-				return values;
-			}
-		};
+	static <E extends Enum<E>> ListedCommandArgument<E> of(@NotNull final Class<E> clazz, @NotNull final Predicate<E> predicate) {
+		return new ListedCommandArgument<>(
+				Arrays.stream(clazz.getEnumConstants())
+						.filter(predicate)
+						.map(Enum::name)
+						.collect(Collectors.toList()),
+				s -> Enum.valueOf(clazz, s)
+		);
 	}
 
-	static <E extends Enum<E>> CommandArgument<E> of(@NotNull final Class<E> clazz) {
+	static <E extends Enum<E>> ListedCommandArgument<E> of(@NotNull final Class<E> clazz) {
 		return of(clazz, e -> true);
 	}
 
@@ -175,23 +128,23 @@ public interface CommandArgument<T> {
 	CommandArgument<Double> DOUBLE = CommandExecution::nextDouble;
 
 	// -- Bukkit Enums
-	CommandArgument<Art> ART = of(Art.class);
-	CommandArgument<Attribute> ATTRIBUTE = of(Attribute.class);
-	CommandArgument<Biome> BIOME = of(Biome.class);
-	CommandArgument<BlockFace> BLOCK_FACE = of(BlockFace.class);
-	CommandArgument<Difficulty> DIFFICULTY = of(Difficulty.class);
-	CommandArgument<DyeColor> DYE_COLOR = of(DyeColor.class);
-	CommandArgument<Effect> EFFECT = of(Effect.class);
-	CommandArgument<EntityType> ENTITY_TYPE = of(EntityType.class);
-	CommandArgument<EquipmentSlot> EQUIPMENT_SLOT = of(EquipmentSlot.class);
-	CommandArgument<GameMode> GAME_MODE = of(GameMode.class);
-	CommandArgument<Material> MATERIAL = of(Material.class);
-	CommandArgument<Particle> PARTICLE = of(Particle.class);
-	CommandArgument<PatternType> PATTERN_TYPE = of(PatternType.class);
-	CommandArgument<PotionType> POTION_TYPE = of(PotionType.class);
-	CommandArgument<Sound> SOUND = of(Sound.class);
-	CommandArgument<SoundCategory> SOUND_CATEGORY = of(SoundCategory.class);
-	CommandArgument<Statistic> STATISTIC = of(Statistic.class);
+	ListedCommandArgument<Art> ART = of(Art.class);
+	ListedCommandArgument<Attribute> ATTRIBUTE = of(Attribute.class);
+	ListedCommandArgument<Biome> BIOME = of(Biome.class);
+	ListedCommandArgument<BlockFace> BLOCK_FACE = of(BlockFace.class);
+	ListedCommandArgument<Difficulty> DIFFICULTY = of(Difficulty.class);
+	ListedCommandArgument<DyeColor> DYE_COLOR = of(DyeColor.class);
+	ListedCommandArgument<Effect> EFFECT = of(Effect.class);
+	ListedCommandArgument<EntityType> ENTITY_TYPE = of(EntityType.class);
+	ListedCommandArgument<EquipmentSlot> EQUIPMENT_SLOT = of(EquipmentSlot.class);
+	ListedCommandArgument<GameMode> GAME_MODE = of(GameMode.class);
+	ListedCommandArgument<Material> MATERIAL = of(Material.class);
+	ListedCommandArgument<Particle> PARTICLE = of(Particle.class);
+	ListedCommandArgument<PatternType> PATTERN_TYPE = of(PatternType.class);
+	ListedCommandArgument<PotionType> POTION_TYPE = of(PotionType.class);
+	ListedCommandArgument<Sound> SOUND = of(Sound.class);
+	ListedCommandArgument<SoundCategory> SOUND_CATEGORY = of(SoundCategory.class);
+	ListedCommandArgument<Statistic> STATISTIC = of(Statistic.class);
 
 	// -- Misc
 	CommandArgument<@Nullable Player> ONLINE_PLAYER =
