@@ -31,22 +31,15 @@ public interface CommandArgument<T> {
 		return 1;
 	}
 
-	default <U> CommandArgument<U> then(@NotNull final Function<T, U> function) {
-		return new CommandArgument<U>() {
-			@Override
-			public U parse(final @NotNull CommandExecution execution) throws CommandException {
-				return function.apply(CommandArgument.this.parse(execution));
-			}
+	default <R> CommandArgument<R> then(@NotNull final Function<T, R> function) {
+		return new TransformCommandArgument<>(this, (execution, value) -> function.apply(value));
+	}
 
-			@Override
-			public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
-				return CommandArgument.this.complete(execution);
-			}
-
-			@Override public int multiplicity() {
-				return CommandArgument.this.multiplicity();
-			}
-		};
+	default CommandArgument<T> check(@NotNull final Predicate<T> predicate) {
+		return new TransformCommandArgument<>(this, (execution, value) -> {
+			if (predicate.test(value)) return value;
+			else throw execution.invalidArgument();
+		});
 	}
 
 	static ListedCommandArgument<String> of(@NotNull final Collection<String> values) {
