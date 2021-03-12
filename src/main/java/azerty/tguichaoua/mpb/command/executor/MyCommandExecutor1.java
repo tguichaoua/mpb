@@ -1,4 +1,4 @@
-package azerty.tguichaoua.mpb.command.function;
+package azerty.tguichaoua.mpb.command.executor;
 
 import azerty.tguichaoua.mpb.command.CommandArgument;
 import azerty.tguichaoua.mpb.command.CommandException;
@@ -6,10 +6,10 @@ import azerty.tguichaoua.mpb.command.CommandExecution;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
-public interface CommandFunction1<A> {
+public interface MyCommandExecutor1<A> {
 	void execute(@NotNull CommandExecution execution, A a) throws CommandException;
 
-	default CommandFunction asCommandFunction(
+	default MyCommandExecutor asMyCommandExecutor(
 			@NotNull final CommandArgument<A> a
 	) {
 		return execution -> execute(execution, execution.get(a));

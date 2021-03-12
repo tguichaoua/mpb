@@ -1,6 +1,6 @@
 package azerty.tguichaoua.mpb.command;
 
-import azerty.tguichaoua.mpb.command.function.*;
+import azerty.tguichaoua.mpb.command.executor.*;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,13 +13,13 @@ public final class SingleCommand extends MyCommand {
 
 	private final @Nullable String permission;
 	private final @NotNull CommandArgument<?>[] arguments;
-	private final @NotNull CommandFunction function;
+	private final @NotNull MyCommandExecutor executor;
 
 	@Override
 	protected void execute(@NotNull final CommandExecution execution) throws CommandException {
 		if (permission != null)
 			execution.checkPermission(permission);
-		function.execute(execution);
+		executor.execute(execution);
 	}
 
 	@Override
@@ -41,14 +41,14 @@ public final class SingleCommand extends MyCommand {
 
 	// --- 0 Arguments ------------------------------------------------
 	public static SingleCommand of(
-			@NotNull final CommandFunction fc
+			@NotNull final MyCommandExecutor fc
 	) {
 		return new SingleCommand(null, new CommandArgument[0], fc);
 	}
 
 	public static SingleCommand of(
 			@NotNull final String permission,
-			@NotNull final CommandFunction fc
+			@NotNull final MyCommandExecutor fc
 	) {
 		return new SingleCommand(permission, new CommandArgument[0], fc);
 	}
@@ -56,35 +56,35 @@ public final class SingleCommand extends MyCommand {
 	// --- 1 Arguments ------------------------------------------------
 	public static <A> SingleCommand of(
 			@NotNull final CommandArgument<A> a,
-			@NotNull final CommandFunction1<A> fc
+			@NotNull final MyCommandExecutor1<A> fc
 	) {
-		return new SingleCommand(null, new CommandArgument[]{a}, fc.asCommandFunction(a));
+		return new SingleCommand(null, new CommandArgument[]{a}, fc.asMyCommandExecutor(a));
 	}
 
 	public static <A> SingleCommand of(
 			@NotNull final String permission,
 			@NotNull final CommandArgument<A> a,
-			@NotNull final CommandFunction1<A> fc
+			@NotNull final MyCommandExecutor1<A> fc
 	) {
-		return new SingleCommand(permission, new CommandArgument[]{a}, fc.asCommandFunction(a));
+		return new SingleCommand(permission, new CommandArgument[]{a}, fc.asMyCommandExecutor(a));
 	}
 
 	// --- 2 Arguments ------------------------------------------------
 	public static <A, B> SingleCommand of(
 			@NotNull final CommandArgument<A> a,
 			@NotNull final CommandArgument<B> b,
-			@NotNull final CommandFunction2<A, B> fc
+			@NotNull final MyCommandExecutor2<A, B> fc
 	) {
-		return new SingleCommand(null, new CommandArgument[]{a, b}, fc.asCommandFunction(a, b));
+		return new SingleCommand(null, new CommandArgument[]{a, b}, fc.asMyCommandExecutor(a, b));
 	}
 
 	public static <A, B> SingleCommand of(
 			@NotNull final String permission,
 			@NotNull final CommandArgument<A> a,
 			@NotNull final CommandArgument<B> b,
-			@NotNull final CommandFunction2<A, B> fc
+			@NotNull final MyCommandExecutor2<A, B> fc
 	) {
-		return new SingleCommand(permission, new CommandArgument[]{a, b}, fc.asCommandFunction(a, b));
+		return new SingleCommand(permission, new CommandArgument[]{a, b}, fc.asMyCommandExecutor(a, b));
 	}
 
 	// --- 3 Arguments ------------------------------------------------
@@ -92,9 +92,9 @@ public final class SingleCommand extends MyCommand {
 			@NotNull final CommandArgument<A> a,
 			@NotNull final CommandArgument<B> b,
 			@NotNull final CommandArgument<C> c,
-			@NotNull final CommandFunction3<A, B, C> fc
+			@NotNull final MyCommandExecutor3<A, B, C> fc
 	) {
-		return new SingleCommand(null, new CommandArgument[]{a, b, c}, fc.asCommandFunction(a, b, c));
+		return new SingleCommand(null, new CommandArgument[]{a, b, c}, fc.asMyCommandExecutor(a, b, c));
 	}
 
 	public static <A, B, C> SingleCommand of(
@@ -102,9 +102,9 @@ public final class SingleCommand extends MyCommand {
 			@NotNull final CommandArgument<A> a,
 			@NotNull final CommandArgument<B> b,
 			@NotNull final CommandArgument<C> c,
-			@NotNull final CommandFunction3<A, B, C> fc
+			@NotNull final MyCommandExecutor3<A, B, C> fc
 	) {
-		return new SingleCommand(permission, new CommandArgument[]{a, b, c}, fc.asCommandFunction(a, b, c));
+		return new SingleCommand(permission, new CommandArgument[]{a, b, c}, fc.asMyCommandExecutor(a, b, c));
 	}
 
 	// --- 4 Arguments ------------------------------------------------
@@ -113,9 +113,9 @@ public final class SingleCommand extends MyCommand {
 			@NotNull final CommandArgument<B> b,
 			@NotNull final CommandArgument<C> c,
 			@NotNull final CommandArgument<D> d,
-			@NotNull final CommandFunction4<A, B, C, D> fc
+			@NotNull final MyCommandExecutor4<A, B, C, D> fc
 	) {
-		return new SingleCommand(null, new CommandArgument[]{a, b, c, d}, fc.asCommandFunction(a, b, c, d));
+		return new SingleCommand(null, new CommandArgument[]{a, b, c, d}, fc.asMyCommandExecutor(a, b, c, d));
 	}
 
 	public static <A, B, C, D> SingleCommand of(
@@ -124,9 +124,9 @@ public final class SingleCommand extends MyCommand {
 			@NotNull final CommandArgument<B> b,
 			@NotNull final CommandArgument<C> c,
 			@NotNull final CommandArgument<D> d,
-			@NotNull final CommandFunction4<A, B, C, D> fc
+			@NotNull final MyCommandExecutor4<A, B, C, D> fc
 	) {
-		return new SingleCommand(permission, new CommandArgument[]{a, b, c, d}, fc.asCommandFunction(a, b, c, d));
+		return new SingleCommand(permission, new CommandArgument[]{a, b, c, d}, fc.asMyCommandExecutor(a, b, c, d));
 	}
 
 	// --- 5 Arguments ------------------------------------------------
@@ -136,9 +136,9 @@ public final class SingleCommand extends MyCommand {
 			@NotNull final CommandArgument<C> c,
 			@NotNull final CommandArgument<D> d,
 			@NotNull final CommandArgument<E> e,
-			@NotNull final CommandFunction5<A, B, C, D, E> fc
+			@NotNull final MyCommandExecutor5<A, B, C, D, E> fc
 	) {
-		return new SingleCommand(null, new CommandArgument[]{a, b, c, d, e}, fc.asCommandFunction(a, b, c, d, e));
+		return new SingleCommand(null, new CommandArgument[]{a, b, c, d, e}, fc.asMyCommandExecutor(a, b, c, d, e));
 	}
 
 	public static <A, B, C, D, E> SingleCommand of(
@@ -148,8 +148,8 @@ public final class SingleCommand extends MyCommand {
 			@NotNull final CommandArgument<C> c,
 			@NotNull final CommandArgument<D> d,
 			@NotNull final CommandArgument<E> e,
-			@NotNull final CommandFunction5<A, B, C, D, E> fc
+			@NotNull final MyCommandExecutor5<A, B, C, D, E> fc
 	) {
-		return new SingleCommand(permission, new CommandArgument[]{a, b, c, d, e}, fc.asCommandFunction(a, b, c, d, e));
+		return new SingleCommand(permission, new CommandArgument[]{a, b, c, d, e}, fc.asMyCommandExecutor(a, b, c, d, e));
 	}
 }
