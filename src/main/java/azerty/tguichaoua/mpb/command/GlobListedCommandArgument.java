@@ -15,22 +15,22 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public final class GlobListedCommandArgument<T> implements CommandArgument<List<T>> {
 
-	private final @NotNull Supplier<Stream<String>> values;
-	private final @NotNull Function<String, T> get;
+	private final @NotNull Supplier<Stream<String>> valueSupplier;
+	private final @NotNull Function<String, T> parser;
 
 	@Override
 	public List<T> parse(@NotNull final CommandExecution execution) throws CommandException {
 		final String pattern = RegexUtils.fromGlob(execution.nextString());
-		return values.get()
+		return valueSupplier.get()
 				.filter(s -> s.matches(pattern))
-				.map(get)
+				.map(parser)
 				.collect(Collectors.toList());
 	}
 
 	@Override
 	public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
 		val start = execution.nextString();
-		final List<String> complete = values.get().filter(s -> s.startsWith(start)).collect(Collectors.toList());
+		final List<String> complete = valueSupplier.get().filter(s -> s.startsWith(start)).collect(Collectors.toList());
 		complete.add("*"); // add the "all" pattern
 		return complete;
 	}
