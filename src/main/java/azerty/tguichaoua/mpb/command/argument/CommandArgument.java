@@ -2,12 +2,14 @@ package azerty.tguichaoua.mpb.command.argument;
 
 import azerty.tguichaoua.mpb.command.CommandException;
 import azerty.tguichaoua.mpb.command.CommandExecution;
+import azerty.tguichaoua.mpb.model.TargetSelector;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -207,6 +209,15 @@ public interface CommandArgument<T> {
 
 				private String complete(final String s) {
 					return StringUtils.isEmpty(s) ? "~" : s;
+				}
+			};
+
+	TargetSelectorCommandArgument TARGET_SELECTOR = TargetSelectorCommandArgument.SINGLETON;
+
+	CommandArgument<List<Entity>> ENTITIES =
+			new ProxyCommandArgument<TargetSelector, List<Entity>>(CommandArgument.TARGET_SELECTOR) {
+				@Override public List<Entity> parse(@NotNull final CommandExecution execution) throws CommandException {
+					return this.source.parse(execution).get(execution.getSender());
 				}
 			};
 }
