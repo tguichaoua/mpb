@@ -1,14 +1,13 @@
 package azerty.tguichaoua.mpb.command;
 
 import azerty.tguichaoua.mpb.command.argument.CommandArgument;
+import azerty.tguichaoua.mpb.util.CommandUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,13 +41,7 @@ public final class CommandExecution {
 	 * @return the location of the sender
 	 */
 	public @NotNull Location getSenderLocation() {
-		if (sender instanceof Entity) {
-			return ((Entity) sender).getLocation();
-		} else if (sender instanceof BlockCommandSender) {
-			return ((BlockCommandSender) sender).getBlock().getLocation().add(0.5, 0.5, 0.5);
-		} else {
-			return sender.getServer().getWorlds().get(0).getSpawnLocation();
-		}
+		return CommandUtils.getCommandSenderLocation(sender);
 	}
 
 	/**
