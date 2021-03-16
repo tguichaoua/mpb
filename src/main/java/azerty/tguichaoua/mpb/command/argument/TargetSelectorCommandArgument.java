@@ -10,6 +10,11 @@ import java.util.Collections;
 
 public class TargetSelectorCommandArgument implements CommandArgument<TargetSelector> {
 
+	public static final String INVALID_FORMAT = "arg.target_selector.format";
+	public static final String INVALID_SELECTOR = "arg.target_selector.selector";
+	public static final String INVALID_ARGUMENT = "arg.target_selector.argument";
+	public static final String INVALID_ARGUMENT_VALUE = "arg.target_selector.argument_value";
+
 	public static final TargetSelectorCommandArgument SINGLETON = new TargetSelectorCommandArgument();
 
 	private TargetSelectorCommandArgument() {
@@ -26,7 +31,17 @@ public class TargetSelectorCommandArgument implements CommandArgument<TargetSele
 				}
 			}
 		}
-		return TargetSelector.parse(sb.toString());
+		try {
+			return TargetSelector.parse(sb.toString());
+		} catch (final TargetSelector.InvalidFormatTargetSelectorParseException e) {
+			throw execution.invalidArgument(INVALID_FORMAT);
+		} catch (final TargetSelector.InvalidSelectorTargetSelectorParseException e) {
+			throw execution.invalidArgument(INVALID_SELECTOR, e.getSelector());
+		} catch (final TargetSelector.InvalidArgumentTargetSelectorParseException e) {
+			throw execution.invalidArgument(INVALID_ARGUMENT, e.getArgument());
+		} catch (final TargetSelector.InvalidArgumentValueTargetSelectorParseException e) {
+			throw execution.invalidArgument(INVALID_ARGUMENT_VALUE, e.getValue());
+		}
 	}
 
 	@Override public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) {

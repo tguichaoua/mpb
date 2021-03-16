@@ -1,31 +1,44 @@
 package azerty.tguichaoua.mpb.command;
 
 import lombok.Getter;
-import org.bukkit.command.CommandSender;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CommandException extends Exception {
 	private static final long serialVersionUID = -2474129753665605873L;
 
 	@Getter private final Type type;
-	@Getter private final CommandSender sender;
 	@Getter private final String label;
-	@Getter private final String[] args;
 	@Getter private final int at;
+	@Getter private final @Nullable String reasonKey;
+	@Getter private final String[] formatArgs;
 
-	CommandException(final @NotNull Type type, final @NotNull CommandExecution execution) {
+	CommandException(
+			final @NotNull Type type,
+			final @NotNull CommandExecution execution,
+			@Nullable final String reasonKey,
+			final String... formatArgs
+	) {
 		super();
 		this.type = type;
-		this.sender = execution.getSender();
 		this.label = execution.getLabel();
-		this.args = execution.getArgs();
 		this.at = execution.getCurrentArg();
+		this.reasonKey = reasonKey;
+		this.formatArgs = formatArgs;
 	}
 
+	CommandException(final @NotNull Type type, final @NotNull CommandExecution execution) {
+		this(type, execution, null);
+	}
+
+	@RequiredArgsConstructor
 	public enum Type {
-		INVALID_ARGUMENT,
-		MISSING_ARGUMENT,
-		PERMISSION,
-		UNKNOWN_COMMAND
+		INVALID_ARGUMENT("type.invalid_argument"),
+		MISSING_ARGUMENT("type.missing_argument"),
+		PERMISSION("type.permission"),
+		UNKNOWN_COMMAND("type.unknown_command");
+
+		public final @NotNull String key;
 	}
 }

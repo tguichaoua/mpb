@@ -45,6 +45,13 @@ public interface CommandArgument<T> {
 		});
 	}
 
+	default CommandArgument<T> check(@NotNull final Predicate<T> predicate, final String reasonKey, final String... formatArgs) {
+		return new TransformCommandArgument<>(this, (execution, value) -> {
+			if (predicate.test(value)) return value;
+			else throw execution.invalidArgument(reasonKey, formatArgs);
+		});
+	}
+
 	default CommandArgument<T> defaultValue(final T defaultValue) {
 		return new ProxyCommandArgument<T, T>(this) {
 			@Override public T parse(@NotNull final CommandExecution execution) throws CommandException {

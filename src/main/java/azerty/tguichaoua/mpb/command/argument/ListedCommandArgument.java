@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public final class ListedCommandArgument<T> implements CommandArgument<T> {
 
+	public static final String INVALID_ARGUMENT = "arg.listed.invalid";
+
 	private final @NotNull Supplier<Stream<String>> valueSupplier;
 	private final @NotNull Function<String, T> parser;
 
@@ -22,7 +24,7 @@ public final class ListedCommandArgument<T> implements CommandArgument<T> {
 	public T parse(@NotNull final CommandExecution execution) throws CommandException {
 		final String s = execution.nextString();
 		if (valueSupplier.get().anyMatch(str -> str.equals(s))) return parser.apply(s);
-		else throw execution.invalidArgument();
+		else throw execution.invalidArgument(INVALID_ARGUMENT, valueSupplier.get().collect(Collectors.joining(", ")));
 	}
 
 	@Override

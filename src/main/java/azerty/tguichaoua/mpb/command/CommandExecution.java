@@ -10,12 +10,17 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 
 public final class CommandExecution {
+
+	public static final String INVALID_INTEGER = "arg.integer.invalid";
+	public static final String INVALID_DOUBLE = "arg.double.invalid";
+
 	@Getter private final @NotNull CommandSender sender;
 	@Getter private @NotNull String label;
-	@Getter(AccessLevel.PACKAGE) private final @NotNull String[] args;
+	private final @NotNull String[] args;
 
 	@Getter(AccessLevel.PACKAGE) private int currentArg = 0;
 
@@ -99,7 +104,7 @@ public final class CommandExecution {
 		try {
 			return Integer.parseInt(nextString());
 		} catch (final NumberFormatException e) {
-			throw invalidArgument();
+			throw invalidArgument(INVALID_INTEGER);
 		}
 	}
 
@@ -107,11 +112,15 @@ public final class CommandExecution {
 		try {
 			return Double.parseDouble(nextString());
 		} catch (final NumberFormatException e) {
-			throw invalidArgument();
+			throw invalidArgument(INVALID_DOUBLE);
 		}
 	}
 
+	public CommandException invalidArgument(@Nullable final String reasonKey, final String... formatArgs) {
+		return new CommandException(CommandException.Type.INVALID_ARGUMENT, this, reasonKey, formatArgs);
+	}
+
 	public CommandException invalidArgument() {
-		return new CommandException(CommandException.Type.INVALID_ARGUMENT, this);
+		return invalidArgument(null);
 	}
 }
