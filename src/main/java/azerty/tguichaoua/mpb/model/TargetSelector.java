@@ -19,7 +19,6 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -172,42 +171,10 @@ public class TargetSelector {
 		}
 	}
 
-	private static final Pattern PARSE_REGEX = Pattern.compile("^@(?<selector>[paers])(?:\\[(?<args>.*)])?$");
-
 	public static TargetSelector parse(@NotNull final String s) throws TargetSelectorParseException {
-		val matcher = PARSE_REGEX.matcher(s);
-		if (!matcher.matches()) {
-			throw new InvalidFormatTargetSelectorParseException();
-		}
-
-		val selectorString = matcher.group("selector");
-		val argsString = matcher.group("args");
-		val builder = TargetSelector.builder();
-
-		builder.selector(Selector.parse(selectorString));
-
-		if (argsString != null) {
-			final String[] args = argsString.split(",");
-			for (final String a : args) {
-				final String[] kv = a.split("=");
-				if (kv.length == 2) {
-					try {
-						final Property property = Property.valueOf(kv[0]);
-						try {
-							property.setter.accept(builder, kv[1]);
-						} catch (final IllegalArgumentException e) {
-							throw new InvalidArgumentValueTargetSelectorParseException(kv[1], e);
-						}
-					} catch (final IllegalArgumentException e) {
-						throw new InvalidArgumentTargetSelectorParseException(kv[0], e);
-					}
-				} else {
-					throw new IllegalArgumentException(String.format("Invalid argument \"%s\"", a));
-				}
-			}
-		}
-
-		return builder.build();
+		final Parser parser = new Parser();
+		parser.consume(s);
+		return parser.get();
 	}
 
 	@RequiredArgsConstructor
@@ -487,6 +454,115 @@ public class TargetSelector {
 		public InvalidArgumentValueTargetSelectorParseException(final String value, final Throwable cause) {
 			super(String.format("Invalid property value \"%s\"", value), cause);
 			this.value = value;
+		}
+	}
+
+	public static final class Parser {
+
+		public enum State {AT, SELECTOR, BEFORE_ARGUMENTS, ARGUMENT_NAME, ARGUMENT_VALUE, END}
+
+		@Getter private State state = State.AT;
+		private final StringBuilder currentValue = new StringBuilder();
+		private final Builder builder = new Builder();
+		private @Nullable Property property = null;
+
+		public String getCurrentValue() {
+			return currentValue.toString();
+		}
+
+		public Property getProperty() {
+			if (state != State.ARGUMENT_VALUE) throw new IllegalStateException();
+			return property;
+		}
+
+		public void consume(final char c) {
+			switch (state) {
+				case AT:
+					if (c != '@') throw new IllegalArgumentException("Expecting \"@\"");
+					state = State.SELECTOR;
+					break;
+				case SELECTOR:
+					switch (c) {
+						case 'p':
+							builder.selector(Selector.PLAYER);
+							break;
+						case 'r':
+							builder.selector(Selector.RANDOM);
+							break;
+						case 'a':
+							builder.selector(Selector.ALL_PLAYERS);
+							break;
+						case 'e':
+							builder.selector(Selector.ENTITIES);
+							break;
+						case 's':
+							builder.selector(Selector.SELF);
+							break;
+						default:
+							throw new InvalidSelectorTargetSelectorParseException(String.valueOf(c));
+					}
+					state = State.BEFORE_ARGUMENTS;
+					break;
+				case BEFORE_ARGUMENTS:
+					if (c != '[') throw new IllegalArgumentException("Expecting \"[\"");
+					state = State.ARGUMENT_NAME;
+					break;
+				case ARGUMENT_NAME:
+					switch (c) {
+						case '=':
+							try {
+								property = Property.valueOf(currentValue.toString());
+							} catch (final IllegalArgumentException e) {
+								throw new InvalidArgumentTargetSelectorParseException(currentValue.toString(), e);
+							}
+							currentValue.setLength(0);
+							state = State.ARGUMENT_VALUE;
+							break;
+						case ']':
+							throw new InvalidFormatTargetSelectorParseException();
+						default:
+							currentValue.append(c);
+							break;
+					}
+					break;
+				case ARGUMENT_VALUE:
+					switch (c) {
+						case ',':
+							parseValue();
+							state = State.ARGUMENT_NAME;
+							break;
+						case ']':
+							parseValue();
+							state = State.END;
+							break;
+						default:
+							currentValue.append(c);
+							break;
+					}
+					break;
+				case END:
+					throw new IllegalArgumentException();
+			}
+		}
+
+		public void consume(@NotNull final String s) {
+			for (final char c : s.toCharArray())
+				consume(c);
+		}
+
+		public TargetSelector get() {
+			if (state != State.END && state != State.BEFORE_ARGUMENTS) throw new IllegalStateException();
+			return builder.build();
+		}
+
+		private void parseValue() {
+			final String value = currentValue.toString();
+			try {
+				Objects.requireNonNull(property).setter.accept(builder, value);
+			} catch (final IllegalArgumentException e) {
+				throw new InvalidArgumentValueTargetSelectorParseException(value, e);
+			}
+			currentValue.setLength(0);
 		}
 	}
 }
