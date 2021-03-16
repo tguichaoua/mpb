@@ -94,7 +94,7 @@ public abstract class MyCommand implements CommandExecutor, TabCompleter {
 		if (exceptionMessageSupplier == null) {
 			return DEFAULT_MESSAGE.get(key);
 		} else {
-			final String s = exceptionMessageSupplier.get(key);
+			final String s = exceptionMessageSupplier.getExceptionMessage(key);
 			return s != null ? s : DEFAULT_MESSAGE.get(key);
 		}
 	}

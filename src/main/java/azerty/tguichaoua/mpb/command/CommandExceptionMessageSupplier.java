@@ -3,6 +3,7 @@ package azerty.tguichaoua.mpb.command;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@FunctionalInterface
 public interface CommandExceptionMessageSupplier {
 	/**
 	 * Returns the message that should be used for the provided key.
@@ -11,5 +12,5 @@ public interface CommandExceptionMessageSupplier {
 	 * @param key the key
 	 * @return the key's message
 	 */
-	@Nullable String get(@NotNull String key);
+	@Nullable String getExceptionMessage(@NotNull String key);
 }
