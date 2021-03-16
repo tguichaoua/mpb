@@ -55,6 +55,8 @@ public abstract class MyCommand implements CommandExecutor, TabCompleter {
 			}
 
 			commandSender.sendMessage(new ComponentBuilder(message).create());
+		} catch (final Throwable t) {
+			t.printStackTrace();
 		}
 		return true;
 	}
@@ -66,7 +68,12 @@ public abstract class MyCommand implements CommandExecutor, TabCompleter {
 			@NotNull final String label,
 			@NotNull final String[] args
 	) {
-		return new ArrayList<>(complete(new CommandExecution(commandSender, label, args)));
+		try {
+			return new ArrayList<>(complete(new CommandExecution(commandSender, label, args)));
+		} catch (final Throwable t) {
+			t.printStackTrace();
+			return Collections.emptyList();
+		}
 	}
 
 	// --- STATIC --------------------------------
