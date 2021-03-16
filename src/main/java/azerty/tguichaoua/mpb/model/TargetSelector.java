@@ -174,10 +174,10 @@ public class TargetSelector {
 
 	private static final Pattern PARSE_REGEX = Pattern.compile("^@(?<selector>[paers])(?:\\[(?<args>.*)])?$");
 
-	public static TargetSelector parse(@NotNull final String s) throws IllegalArgumentException {
+	public static TargetSelector parse(@NotNull final String s) throws TargetSelectorParseException {
 		val matcher = PARSE_REGEX.matcher(s);
 		if (!matcher.matches()) {
-			throw new IllegalArgumentException("The string is not a valid target selector.");
+			throw new InvalidFormatTargetSelectorParseException();
 		}
 
 		val selectorString = matcher.group("selector");
@@ -196,10 +196,10 @@ public class TargetSelector {
 						try {
 							property.setter.accept(builder, kv[1]);
 						} catch (final IllegalArgumentException e) {
-							throw new IllegalArgumentException(String.format("Invalid property value \"%s\"", kv[1]), e);
+							throw new InvalidArgumentValueTargetSelectorParseException(kv[1], e);
 						}
 					} catch (final IllegalArgumentException e) {
-						throw new IllegalArgumentException(String.format("Invalid property \"%s\"", kv[0]), e);
+						throw new InvalidArgumentTargetSelectorParseException(kv[0], e);
 					}
 				} else {
 					throw new IllegalArgumentException(String.format("Invalid argument \"%s\"", a));
@@ -231,7 +231,7 @@ public class TargetSelector {
 				case "s":
 					return Selector.SELF;
 				default:
-					throw new IllegalArgumentException(String.format("Invalid selector \"%s\", expecting \"p\", \"r\", \"a\", \"e\" or \"s\".", s));
+					throw new InvalidSelectorTargetSelectorParseException(s);
 			}
 		}
 	}
@@ -423,4 +423,58 @@ public class TargetSelector {
 			}
 		}
 	}
+
+	public static class TargetSelectorParseException extends IllegalArgumentException {
+		private static final long serialVersionUID = 1393649650890334972L;
+
+		public TargetSelectorParseException(final String message) {
+			super(message);
+		}
+
+		public TargetSelectorParseException(final String message, final Throwable cause) {
+			super(message, cause);
+		}
+	}
+
+	public static class InvalidFormatTargetSelectorParseException extends TargetSelectorParseException {
+		private static final long serialVersionUID = -8100864707102534769L;
+
+		public InvalidFormatTargetSelectorParseException() {
+			super("The value's format is not valid.");
+		}
+	}
+
+	public static class InvalidSelectorTargetSelectorParseException extends TargetSelectorParseException {
+		private static final long serialVersionUID = 672177824473989302L;
+
+		@Getter private final String selector;
+
+		public InvalidSelectorTargetSelectorParseException(final String selector) {
+			super(String.format("Invalid selector \"%s\", expecting \"p\", \"r\", \"a\", \"e\" or \"s\".", selector));
+			this.selector = selector;
+		}
+	}
+
+	public static class InvalidArgumentTargetSelectorParseException extends TargetSelectorParseException {
+		private static final long serialVersionUID = -5093117766931978581L;
+
+		@Getter private final String argument;
+
+		public InvalidArgumentTargetSelectorParseException(final String argument, final Throwable cause) {
+			super(String.format("Invalid property \"%s\"", argument), cause);
+			this.argument = argument;
+		}
+	}
+
+	public static class InvalidArgumentValueTargetSelectorParseException extends TargetSelectorParseException {
+		private static final long serialVersionUID = 14225124028860583L;
+
+		@Getter private final String value;
+
+		public InvalidArgumentValueTargetSelectorParseException(final String value, final Throwable cause) {
+			super(String.format("Invalid property value \"%s\"", value), cause);
+			this.value = value;
+		}
+	}
 }
+
