@@ -47,11 +47,12 @@ public class TargetSelector {
 	private final @Nullable NamePredicate name;
 	@Singular private final @Nullable Collection<TagPredicate> tags;
 
-	private final @Nullable Map<String, Range> scores; // TODO
-	private final @Nullable Object team; // TODO
-	private final @Nullable Object advancements; // TODO
-	private final @Nullable Object nbt; // TODO
+	private final @Nullable Predicate<Entity> scores; // TODO
+	private final @Nullable Predicate<Entity> team; // TODO
+	private final @Nullable Predicate<Entity> advancements; // TODO
+	private final @Nullable Predicate<Entity> nbt; // TODO
 
+	// TODO : optimize ?
 	private @Nullable Vector dxyz() {
 		if (dx == null && dy == null && dz == null) return null;
 		return new Vector(
@@ -82,10 +83,10 @@ public class TargetSelector {
 							&& (yRotation == null || yRotation.test(target))
 							&& (type == null || type.test(target))
 							&& (tags == null || tags.stream().allMatch(t -> t.test(target)))
-				// && (scores == null || true) // TODO
-				// && (team == null || true) // TODO
-				// && (advancements == null || true) // TODO
-				// && (nbt == null || true) // TODO
+							&& (scores == null || scores.test(target))
+							&& (team == null || team.test(target))
+							&& (advancements == null || advancements.test(target))
+							&& (nbt == null || nbt.test(target))
 			) {
 				return Collections.singletonList((Entity) sender);
 			} else {
@@ -108,9 +109,13 @@ public class TargetSelector {
 			entities = entities.filter(e -> distance.contains(origin.distance(e.getLocation())));
 		}
 
-		// TODO : scores
+		if (scores != null) {
+			entities = entities.filter(scores);
+		}
 
-		// TODO : team
+		if (team != null) {
+			entities = entities.filter(team);
+		}
 
 		if (level != null) {
 			entities = entities.filter(level);
@@ -142,9 +147,13 @@ public class TargetSelector {
 			}
 		}
 
-		// TODO : advencements
+		if (advancements != null) {
+			entities = entities.filter(advancements);
+		}
 
-		// TODO : nbt
+		if (nbt != null) {
+			entities = entities.filter(nbt);
+		}
 
 		if (selector.equals(Selector.RANDOM)) {
 			final List<Entity> e = entities.collect(Collectors.toList());
@@ -405,70 +414,7 @@ public class TargetSelector {
 		}
 	}
 
-	public static class TargetSelectorParseException extends IllegalArgumentException {
-		private static final long serialVersionUID = 1393649650890334972L;
-
-		public TargetSelectorParseException(final String message) {
-			super(message);
-		}
-
-		public TargetSelectorParseException(final String message, final Throwable cause) {
-			super(message, cause);
-		}
-	}
-
-	public static class InvalidFormatTargetSelectorParseException extends TargetSelectorParseException {
-		private static final long serialVersionUID = -8100864707102534769L;
-
-		public InvalidFormatTargetSelectorParseException() {
-			super("The value's format is not valid.");
-		}
-	}
-
-	public static class InvalidSelectorTargetSelectorParseException extends TargetSelectorParseException {
-		private static final long serialVersionUID = 672177824473989302L;
-
-		@Getter private final String selector;
-
-		public InvalidSelectorTargetSelectorParseException(final String selector) {
-			super(String.format("Invalid selector \"%s\", expecting \"p\", \"r\", \"a\", \"e\" or \"s\".", selector));
-			this.selector = selector;
-		}
-	}
-
-	public static class InvalidArgumentTargetSelectorParseException extends TargetSelectorParseException {
-		private static final long serialVersionUID = -5093117766931978581L;
-
-		@Getter private final String argument;
-
-		public InvalidArgumentTargetSelectorParseException(final String argument, final Throwable cause) {
-			super(String.format("Invalid property \"%s\"", argument), cause);
-			this.argument = argument;
-		}
-	}
-
-	public static class InvalidArgumentValueTargetSelectorParseException extends TargetSelectorParseException {
-		private static final long serialVersionUID = 14225124028860583L;
-
-		@Getter private final String value;
-
-		public InvalidArgumentValueTargetSelectorParseException(final String value, final Throwable cause) {
-			super(String.format("Invalid property value \"%s\"", value), cause);
-			this.value = value;
-		}
-	}
-
-	public static class IllegalMultipleArgumentTargetSelectorParseException extends TargetSelectorParseException {
-		private static final long serialVersionUID = 5183290203480168540L;
-
-		@Getter private final Property property;
-
-		public IllegalMultipleArgumentTargetSelectorParseException(@NotNull final Property property) {
-			super(property + " cannot be defined multiple time.");
-			this.property = property;
-		}
-	}
-
+	///////////////////////////////////////////////////////////////////////////////////////////////
 	public static final class Parser {
 
 		public enum State {AT, SELECTOR, BEFORE_ARGUMENTS, ARGUMENT_NAME, ARGUMENT_VALUE, END}
@@ -586,6 +532,71 @@ public class TargetSelector {
 				throw new InvalidArgumentValueTargetSelectorParseException(value, e);
 			}
 			currentValue.setLength(0);
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	public static class TargetSelectorParseException extends IllegalArgumentException {
+		private static final long serialVersionUID = 1393649650890334972L;
+
+		public TargetSelectorParseException(final String message) {
+			super(message);
+		}
+
+		public TargetSelectorParseException(final String message, final Throwable cause) {
+			super(message, cause);
+		}
+	}
+
+	public static class InvalidFormatTargetSelectorParseException extends TargetSelectorParseException {
+		private static final long serialVersionUID = -8100864707102534769L;
+
+		public InvalidFormatTargetSelectorParseException() {
+			super("The value's format is not valid.");
+		}
+	}
+
+	public static class InvalidSelectorTargetSelectorParseException extends TargetSelectorParseException {
+		private static final long serialVersionUID = 672177824473989302L;
+
+		@Getter private final String selector;
+
+		public InvalidSelectorTargetSelectorParseException(final String selector) {
+			super(String.format("Invalid selector \"%s\", expecting \"p\", \"r\", \"a\", \"e\" or \"s\".", selector));
+			this.selector = selector;
+		}
+	}
+
+	public static class InvalidArgumentTargetSelectorParseException extends TargetSelectorParseException {
+		private static final long serialVersionUID = -5093117766931978581L;
+
+		@Getter private final String argument;
+
+		public InvalidArgumentTargetSelectorParseException(final String argument, final Throwable cause) {
+			super(String.format("Invalid property \"%s\"", argument), cause);
+			this.argument = argument;
+		}
+	}
+
+	public static class InvalidArgumentValueTargetSelectorParseException extends TargetSelectorParseException {
+		private static final long serialVersionUID = 14225124028860583L;
+
+		@Getter private final String value;
+
+		public InvalidArgumentValueTargetSelectorParseException(final String value, final Throwable cause) {
+			super(String.format("Invalid property value \"%s\"", value), cause);
+			this.value = value;
+		}
+	}
+
+	public static class IllegalMultipleArgumentTargetSelectorParseException extends TargetSelectorParseException {
+		private static final long serialVersionUID = 5183290203480168540L;
+
+		@Getter private final Property property;
+
+		public IllegalMultipleArgumentTargetSelectorParseException(@NotNull final Property property) {
+			super(property + " cannot be defined multiple time.");
+			this.property = property;
 		}
 	}
 }
