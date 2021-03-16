@@ -3,7 +3,6 @@ package azerty.tguichaoua.mpb.command.argument;
 import azerty.tguichaoua.mpb.command.CommandException;
 import azerty.tguichaoua.mpb.command.CommandExecution;
 import azerty.tguichaoua.mpb.model.TargetSelector;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
@@ -162,55 +161,7 @@ public interface CommandArgument<T> {
 					s -> Bukkit.getServer().getPlayerExact(s)
 			);
 
-	CommandArgument<Location> LOCATION =
-			new CommandArgument<Location>() {
-				@Override
-				public Location parse(final @NotNull CommandExecution execution) throws CommandException {
-					final Location location = execution.getSenderLocation();
-					return new Location(
-							location.getWorld(),
-							getCoord(execution, location.getX()),
-							getCoord(execution, location.getY()),
-							getCoord(execution, location.getZ())
-					);
-				}
-
-				private double getCoord(final CommandExecution execution, final double relative) throws CommandException {
-					double coord = 0;
-					String arg = execution.nextString();
-					if (arg.startsWith("~")) {
-						if (arg.length() == 1) {
-							return relative;
-						}
-						arg = arg.substring(1);
-						coord += relative;
-					}
-
-					try {
-						return coord + Double.parseDouble(arg);
-					} catch (final NumberFormatException exception) {
-						throw execution.invalidArgument();
-					}
-				}
-
-				@Override
-				public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
-					switch (execution.remains()) {
-						case 1:
-							return Collections.singleton(complete(execution.nextString()) + " ~ ~");
-						case 2:
-							execution.next();
-							return Collections.singleton(complete(execution.nextString()) + " ~");
-						default:
-							execution.next(2);
-							return Collections.singleton(complete(execution.nextString()));
-					}
-				}
-
-				private String complete(final String s) {
-					return StringUtils.isEmpty(s) ? "~" : s;
-				}
-			};
+	LocationCommandArgument LOCATION = LocationCommandArgument.SINGLETON;
 
 	TargetSelectorCommandArgument TARGET_SELECTOR = TargetSelectorCommandArgument.SINGLETON;
 
