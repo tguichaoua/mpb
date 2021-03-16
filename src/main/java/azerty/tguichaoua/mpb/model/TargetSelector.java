@@ -218,35 +218,36 @@ public class TargetSelector {
 
 	@RequiredArgsConstructor
 	public enum Property {
-		x((b, s) -> b.x(Double.parseDouble(s))),
-		y((b, s) -> b.y(Double.parseDouble(s))),
-		z((b, s) -> b.z(Double.parseDouble(s))),
-		dx((b, s) -> b.dx(Double.parseDouble(s))),
-		dy((b, s) -> b.dy(Double.parseDouble(s))),
-		dz((b, s) -> b.dz(Double.parseDouble(s))),
-		distance((b, s) -> b.distance(Range.parse(s))),
-		limit((b, s) -> b.limit(Integer.parseInt(s))),
-		x_rotation((b, s) -> b.xRotation(XRotationPredicate.parse(s))),
-		y_rotation((b, s) -> b.yRotation(YRotationPredicate.parse(s))),
-		type((b, s) -> b.type(TypePredicate.parse(s))),
-		level((b, s) -> b.level(LevelPredicate.parse(s))),
-		gamemode((b, s) -> b.gameMode(GameModePredicate.parse(s))),
-		name((b, s) -> b.name(NamePredicate.parse(s))),
-		tag((b, s) -> b.tag(TagPredicate.parse(s))),
-		scores((b, s) -> {
+		x(false, (b, s) -> b.x(Double.parseDouble(s))),
+		y(false, (b, s) -> b.y(Double.parseDouble(s))),
+		z(false, (b, s) -> b.z(Double.parseDouble(s))),
+		dx(false, (b, s) -> b.dx(Double.parseDouble(s))),
+		dy(false, (b, s) -> b.dy(Double.parseDouble(s))),
+		dz(false, (b, s) -> b.dz(Double.parseDouble(s))),
+		distance(false, (b, s) -> b.distance(Range.parse(s))),
+		limit(false, (b, s) -> b.limit(Integer.parseInt(s))),
+		x_rotation(false, (b, s) -> b.xRotation(XRotationPredicate.parse(s))),
+		y_rotation(false, (b, s) -> b.yRotation(YRotationPredicate.parse(s))),
+		type(false, (b, s) -> b.type(TypePredicate.parse(s))),
+		level(false, (b, s) -> b.level(LevelPredicate.parse(s))),
+		gamemode(false, (b, s) -> b.gameMode(GameModePredicate.parse(s))),
+		name(false, (b, s) -> b.name(NamePredicate.parse(s))),
+		tag(true, (b, s) -> b.tag(TagPredicate.parse(s))),
+		scores(false, (b, s) -> {
 			throw new RuntimeException("Not Implemented");
 		}), // TODO
-		team((b, s) -> {
+		team(false, (b, s) -> {
 			throw new RuntimeException("Not Implemented");
 		}), // TODO
-		advancements((b, s) -> {
+		advancements(false, (b, s) -> {
 			throw new RuntimeException("Not Implemented");
 		}), // TODO
-		nbt((b, s) -> {
+		nbt(false, (b, s) -> {
 			throw new RuntimeException("Not Implemented");
 		}) // TODO
 		;
 
+		private final boolean allowMultiple;
 		private final @NotNull BiConsumer<TargetSelector.Builder, String> setter;
 	}
 
@@ -457,6 +458,17 @@ public class TargetSelector {
 		}
 	}
 
+	public static class IllegalMultipleArgumentTargetSelectorParseException extends TargetSelectorParseException {
+		private static final long serialVersionUID = 5183290203480168540L;
+
+		@Getter private final Property property;
+
+		public IllegalMultipleArgumentTargetSelectorParseException(@NotNull final Property property) {
+			super(property + " cannot be defined multiple time.");
+			this.property = property;
+		}
+	}
+
 	public static final class Parser {
 
 		public enum State {AT, SELECTOR, BEFORE_ARGUMENTS, ARGUMENT_NAME, ARGUMENT_VALUE, END}
@@ -465,6 +477,7 @@ public class TargetSelector {
 		private final StringBuilder currentValue = new StringBuilder();
 		private final Builder builder = new Builder();
 		private @Nullable Property property = null;
+		private final Set<Property> setProperties = new HashSet<>();
 
 		public String getCurrentValue() {
 			return currentValue.toString();
@@ -473,6 +486,10 @@ public class TargetSelector {
 		public Property getProperty() {
 			if (state != State.ARGUMENT_VALUE) throw new IllegalStateException();
 			return property;
+		}
+
+		public boolean isSet(final Property property) {
+			return setProperties.contains(property);
 		}
 
 		public void consume(final char c) {
@@ -514,6 +531,12 @@ public class TargetSelector {
 								property = Property.valueOf(currentValue.toString());
 							} catch (final IllegalArgumentException e) {
 								throw new InvalidArgumentTargetSelectorParseException(currentValue.toString(), e);
+							}
+							if (isSet(property)) {
+								throw new IllegalMultipleArgumentTargetSelectorParseException(property);
+							}
+							if (!property.allowMultiple) {
+								setProperties.add(property);
 							}
 							currentValue.setLength(0);
 							state = State.ARGUMENT_VALUE;
