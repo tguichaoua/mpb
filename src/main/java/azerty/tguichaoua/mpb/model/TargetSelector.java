@@ -210,13 +210,26 @@ public class TargetSelector {
 		return builder.build();
 	}
 
-
+	@RequiredArgsConstructor
 	public enum Selector {
-		PLAYER, // @p
-		RANDOM, // @r
-		ALL_PLAYERS, // @a
-		ENTITIES, // @e
-		SELF; // @s
+		PLAYER("@p"),
+		RANDOM("@r"),
+		ALL_PLAYERS("@a"),
+		ENTITIES("@e"),
+		SELF("@s");
+
+		private final String name;
+
+		@Override public String toString() {
+			return name;
+		}
+
+		public static final Collection<String> names =
+				Collections.unmodifiableCollection(
+						Arrays.stream(TargetSelector.Selector.values())
+								.map(Enum::toString)
+								.collect(Collectors.toList())
+				);
 
 		public static Selector parse(@NotNull final String s) {
 			switch (s.startsWith("@") ? s.substring(1) : s) {
