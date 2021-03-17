@@ -248,7 +248,7 @@ public class TargetSelector {
 		name(false, (b, s) -> b.name(NamePredicate.parse(s))),
 		tag(true, (b, s) -> b.tag(TagPredicate.parse(s))),
 		scores(false, (b, s) -> b.scores(ScoresPredicate.parse(s))),
-		team(false, (b, s) -> TeamPredicate.parse(s)),
+		team(false, (b, s) -> b.team(TeamPredicate.parse(s))),
 		advancements(false, (b, s) -> {
 			throw new RuntimeException("Not Implemented");
 		}), // TODO
