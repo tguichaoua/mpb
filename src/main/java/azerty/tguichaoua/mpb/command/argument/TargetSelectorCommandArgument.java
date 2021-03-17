@@ -122,9 +122,10 @@ public class TargetSelectorCommandArgument implements CommandArgument<TargetSele
 		return Collections.emptyList();
 	}
 
-	private Collection<String> completeEnumProperty(final String last, final String name, final Class<? extends Enum<?>> clazz) {
+	private Collection<String> completeEnumProperty(final String last, final String currentValue, final Class<? extends Enum<?>> clazz) {
 		final int i = Math.max(last.lastIndexOf('!'), last.lastIndexOf('='));
 		final String start = last.substring(0, i + 1);
+		final String name = currentValue.startsWith("!") ? currentValue.substring(1).trim() : currentValue;
 		return Arrays.stream(clazz.getEnumConstants())
 				.map(Enum::toString)
 				.filter(s -> s.startsWith(name))
