@@ -54,7 +54,6 @@ public class TargetSelector {
 	private final @Nullable TeamPredicate team;
 	private final @Nullable ScoresPredicate scores;
 
-	// TODO : optimize ?
 	private @Nullable Vector dxyz() {
 		if (dx == null && dy == null && dz == null) return null;
 		return new Vector(
