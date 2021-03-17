@@ -1,5 +1,7 @@
 package azerty.tguichaoua.mpb.command;
 
+import azerty.tguichaoua.mpb.command.argument.DoubleCommandArgument;
+import azerty.tguichaoua.mpb.command.argument.IntegerCommandArgument;
 import azerty.tguichaoua.mpb.command.argument.ListedCommandArgument;
 import azerty.tguichaoua.mpb.command.argument.TargetSelectorCommandArgument;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -86,8 +88,8 @@ public abstract class MyCommand implements CommandExecutor, TabCompleter {
 		DEFAULT_MESSAGE.put(CommandException.Type.MISSING_ARGUMENT.key, "More arguments are required.");
 		DEFAULT_MESSAGE.put(CommandException.Type.INVALID_ARGUMENT.key, "Invalid argument");
 
-		DEFAULT_MESSAGE.put(CommandExecution.INVALID_INTEGER, "The value should be an integer.");
-		DEFAULT_MESSAGE.put(CommandExecution.INVALID_DOUBLE, "The value should be a double.");
+		DEFAULT_MESSAGE.put(IntegerCommandArgument.INVALID_ARGUMENT, "The value should be an integer.");
+		DEFAULT_MESSAGE.put(DoubleCommandArgument.INVALID_ARGUMENT, "The value should be a double.");
 
 		DEFAULT_MESSAGE.put(ListedCommandArgument.INVALID_ARGUMENT, "The value should be one of the following : %s");
 

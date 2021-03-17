@@ -15,9 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 public final class CommandExecution {
 
-	public static final String INVALID_INTEGER = "arg.integer.invalid";
-	public static final String INVALID_DOUBLE = "arg.double.invalid";
-
 	@Getter private final @NotNull CommandSender sender;
 	@Getter private @NotNull String label;
 	private final @NotNull String[] args;
@@ -98,22 +95,6 @@ public final class CommandExecution {
 	public String nextString() throws CommandException {
 		if (currentArg == args.length) throw new CommandException(CommandException.Type.MISSING_ARGUMENT, this);
 		return args[currentArg++];
-	}
-
-	public int nextInteger() throws CommandException {
-		try {
-			return Integer.parseInt(nextString());
-		} catch (final NumberFormatException e) {
-			throw invalidArgument(INVALID_INTEGER);
-		}
-	}
-
-	public double nextDouble() throws CommandException {
-		try {
-			return Double.parseDouble(nextString());
-		} catch (final NumberFormatException e) {
-			throw invalidArgument(INVALID_DOUBLE);
-		}
 	}
 
 	public CommandException invalidArgument(@Nullable final String reasonKey, final String... formatArgs) {

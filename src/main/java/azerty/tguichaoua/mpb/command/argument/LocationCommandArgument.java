@@ -41,7 +41,7 @@ public class LocationCommandArgument implements CommandArgument<Location> {
 		try {
 			return coord + Double.parseDouble(arg);
 		} catch (final NumberFormatException exception) {
-			throw execution.invalidArgument(CommandExecution.INVALID_DOUBLE);
+			throw execution.invalidArgument(DoubleCommandArgument.INVALID_ARGUMENT);
 		}
 	}
 

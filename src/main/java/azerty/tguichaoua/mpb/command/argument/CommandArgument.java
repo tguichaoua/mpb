@@ -132,8 +132,8 @@ public interface CommandArgument<T> {
 
 	// -- Single value
 	CommandArgument<String> STRING = CommandExecution::nextString;
-	CommandArgument<Integer> INTEGER = CommandExecution::nextInteger;
-	CommandArgument<Double> DOUBLE = CommandExecution::nextDouble;
+	IntegerCommandArgument INTEGER = IntegerCommandArgument.SINGLETON;
+	DoubleCommandArgument DOUBLE = DoubleCommandArgument.SINGLETON;
 
 	// -- Bukkit Enums
 	ListedCommandArgument<Art> ART = of(Art.class);
