@@ -14,7 +14,7 @@ public class DoubleCommandArgument implements CommandArgument<@NotNull Double> {
 	@Override
 	public @NotNull Double parse(@NotNull final CommandExecution execution) throws CommandException {
 		try {
-			return Double.parseDouble(execution.nextString());
+			return Double.parseDouble(execution.nextArgument());
 		} catch (final NumberFormatException e) {
 			throw execution.invalidArgument(INVALID_ARGUMENT);
 		}

@@ -14,7 +14,7 @@ public class IntegerCommandArgument implements CommandArgument<@NotNull Integer>
 	@Override
 	public @NotNull Integer parse(@NotNull final CommandExecution execution) throws CommandException {
 		try {
-			return Integer.parseInt(execution.nextString());
+			return Integer.parseInt(execution.nextArgument());
 		} catch (final NumberFormatException e) {
 			throw execution.invalidArgument(INVALID_ARGUMENT);
 		}

@@ -22,14 +22,14 @@ public final class ListedCommandArgument<T> implements CommandArgument<T> {
 
 	@Override
 	public T parse(@NotNull final CommandExecution execution) throws CommandException {
-		final String s = execution.nextString();
+		final String s = execution.nextArgument();
 		if (valueSupplier.get().anyMatch(str -> str.equals(s))) return parser.apply(s);
 		else throw execution.invalidArgument(INVALID_ARGUMENT, valueSupplier.get().collect(Collectors.joining(", ")));
 	}
 
 	@Override
 	public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
-		val start = execution.nextString();
+		val start = execution.nextArgument();
 		return valueSupplier.get().filter(s -> s.startsWith(start)).collect(Collectors.toList());
 	}
 

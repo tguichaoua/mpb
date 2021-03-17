@@ -75,6 +75,11 @@ public final class CommandExecution {
 		return args[currentArg];
 	}
 
+	public String nextArgument() throws CommandException {
+		if (currentArg == args.length) throw new CommandException(CommandException.Type.MISSING_ARGUMENT, this);
+		return args[currentArg++];
+	}
+
 	public void next() throws CommandException {
 		if (currentArg == args.length) throw new CommandException(CommandException.Type.MISSING_ARGUMENT, this);
 		currentArg++;
@@ -90,11 +95,6 @@ public final class CommandExecution {
 
 	public <T> T get(final CommandArgument<T> parser) throws CommandException {
 		return parser.parse(this);
-	}
-
-	public String nextString() throws CommandException {
-		if (currentArg == args.length) throw new CommandException(CommandException.Type.MISSING_ARGUMENT, this);
-		return args[currentArg++];
 	}
 
 	public CommandException invalidArgument(@Nullable final String reasonKey, final String... formatArgs) {

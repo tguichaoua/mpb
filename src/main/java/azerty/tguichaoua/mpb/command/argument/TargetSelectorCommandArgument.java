@@ -28,7 +28,7 @@ public class TargetSelectorCommandArgument implements CommandArgument<TargetSele
 	@Override public TargetSelector parse(@NotNull final CommandExecution execution) throws CommandException {
 		final TargetSelector.Parser parser = new TargetSelector.Parser();
 
-		parser.consume(execution.nextString());
+		parser.consume(execution.nextArgument());
 
 		if (parser.getState().equals(TargetSelector.Parser.State.BEFORE_ARGUMENTS)) {
 			return parser.get();
@@ -36,7 +36,7 @@ public class TargetSelectorCommandArgument implements CommandArgument<TargetSele
 
 		while (!parser.getState().equals(TargetSelector.Parser.State.END)) {
 			try {
-				parser.consume(execution.nextString());
+				parser.consume(execution.nextArgument());
 			} catch (final TargetSelector.InvalidFormatTargetSelectorParseException e) {
 				throw execution.invalidArgument(INVALID_FORMAT);
 			} catch (final TargetSelector.InvalidSelectorTargetSelectorParseException e) {
@@ -54,7 +54,7 @@ public class TargetSelectorCommandArgument implements CommandArgument<TargetSele
 	@Override public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
 		final TargetSelector.Parser parser = new TargetSelector.Parser();
 
-		final String str = execution.nextString();
+		final String str = execution.nextArgument();
 
 		try {
 			parser.consume(str);
@@ -75,7 +75,7 @@ public class TargetSelectorCommandArgument implements CommandArgument<TargetSele
 				String last = str;
 
 				while (execution.remains() != 0 && !parser.getState().equals(TargetSelector.Parser.State.END)) {
-					last = execution.nextString();
+					last = execution.nextArgument();
 					try {
 						parser.consume(last);
 					} catch (final IllegalArgumentException e) {

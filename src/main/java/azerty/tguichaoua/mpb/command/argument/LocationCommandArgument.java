@@ -29,7 +29,7 @@ public class LocationCommandArgument implements CommandArgument<Location> {
 
 	private double getCoordinate(final CommandExecution execution, final double relative) throws CommandException {
 		double coord = 0;
-		String arg = execution.nextString();
+		String arg = execution.nextArgument();
 		if (arg.startsWith("~")) {
 			if (arg.length() == 1) {
 				return relative;
@@ -49,13 +49,13 @@ public class LocationCommandArgument implements CommandArgument<Location> {
 	public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
 		switch (execution.remains()) {
 			case 1:
-				return Collections.singleton(complete(execution.nextString()) + " ~ ~");
+				return Collections.singleton(complete(execution.nextArgument()) + " ~ ~");
 			case 2:
 				execution.next();
-				return Collections.singleton(complete(execution.nextString()) + " ~");
+				return Collections.singleton(complete(execution.nextArgument()) + " ~");
 			default:
 				execution.next(2);
-				return Collections.singleton(complete(execution.nextString()));
+				return Collections.singleton(complete(execution.nextArgument()));
 		}
 	}
 

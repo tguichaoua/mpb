@@ -18,7 +18,7 @@ public final class MultipleCommand extends MyCommand {
 		if (execution.remains() > 0) {
 			final MyCommand subCommand = children.get(execution.current());
 			if (subCommand != null) {
-				execution.pushLabel(execution.nextString()); // consume the sub command name
+				execution.pushLabel(execution.nextArgument()); // consume the sub command name
 				subCommand.execute(execution);
 				return;
 			} else if (command == null) {
@@ -43,7 +43,7 @@ public final class MultipleCommand extends MyCommand {
 			try {
 				final MyCommand subCommand = children.get(execution.current());
 				if (subCommand != null) {
-					execution.pushLabel(execution.nextString()); // consume the sub command name
+					execution.pushLabel(execution.nextArgument()); // consume the sub command name
 					complete.addAll(subCommand.complete(execution));
 				} else if (command != null) {
 					complete.addAll(command.complete(execution));

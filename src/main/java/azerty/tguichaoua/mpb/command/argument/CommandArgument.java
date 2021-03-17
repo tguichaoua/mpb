@@ -131,7 +131,7 @@ public interface CommandArgument<T> {
 	}
 
 	// -- Single value
-	CommandArgument<String> STRING = CommandExecution::nextString;
+	CommandArgument<String> STRING = CommandExecution::nextArgument;
 	IntegerCommandArgument INTEGER = IntegerCommandArgument.SINGLETON;
 	DoubleCommandArgument DOUBLE = DoubleCommandArgument.SINGLETON;
 

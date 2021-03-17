@@ -22,7 +22,7 @@ public final class GlobListedCommandArgument<T> implements CommandArgument<List<
 
 	@Override
 	public List<T> parse(@NotNull final CommandExecution execution) throws CommandException {
-		final String pattern = RegexUtils.fromGlob(execution.nextString());
+		final String pattern = RegexUtils.fromGlob(execution.nextArgument());
 		return valueSupplier.get()
 				.filter(s -> s.matches(pattern))
 				.map(parser)
@@ -31,7 +31,7 @@ public final class GlobListedCommandArgument<T> implements CommandArgument<List<
 
 	@Override
 	public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
-		val start = execution.nextString();
+		val start = execution.nextArgument();
 		final List<String> complete = valueSupplier.get().filter(s -> s.startsWith(start)).collect(Collectors.toList());
 		complete.add("*"); // add the "all" pattern
 		return complete;
