@@ -2,26 +2,28 @@ package azerty.tguichaoua.mpb.command.argument;
 
 import azerty.tguichaoua.mpb.command.CommandException;
 import azerty.tguichaoua.mpb.command.CommandExecution;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
-public final class TransformCommandArgument<T, R> extends ProxyCommandArgument<T, R> {
-	private final @NotNull Function<T, R> function;
+import java.util.Collection;
 
-	public TransformCommandArgument(
-			@NotNull final CommandArgument<T> source,
-			@NotNull final Function<T, R> function
-	) {
-		super(source);
-		this.function = function;
+@RequiredArgsConstructor
+public final class TransformCommandArgument<T, R> implements CommandArgument<R> {
+	private final @NotNull CommandArgument<T> source;
+	private final @NotNull Transform<T, R> transform;
+
+	@Override
+	public R parse(@NotNull final CommandExecution execution) throws CommandException {
+		return transform.apply(execution, source);
 	}
 
-	@Override public R parse(@NotNull final CommandExecution execution) throws CommandException {
-		return function.apply(execution, source.parse(execution));
+	@Override
+	public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
+		return source.complete(execution);
 	}
 
 	@FunctionalInterface
-	interface Function<T, R> {
-		R apply(CommandExecution execution, T value) throws CommandException;
+	interface Transform<T, R> {
+		R apply(CommandExecution execution, CommandArgument<T> argument) throws CommandException;
 	}
 }
-

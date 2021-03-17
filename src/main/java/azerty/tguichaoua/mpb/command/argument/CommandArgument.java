@@ -2,7 +2,6 @@ package azerty.tguichaoua.mpb.command.argument;
 
 import azerty.tguichaoua.mpb.command.CommandException;
 import azerty.tguichaoua.mpb.command.CommandExecution;
-import azerty.tguichaoua.mpb.model.TargetSelector;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
@@ -31,32 +30,30 @@ public interface CommandArgument<T> {
 	}
 
 	default <R> CommandArgument<R> then(@NotNull final Function<T, R> function) {
-		return new TransformCommandArgument<>(this, (execution, value) -> function.apply(value));
+		return new TransformCommandArgument<>(this, (execution, argument) -> function.apply(execution.get(argument)));
 	}
 
 	default CommandArgument<T> check(@NotNull final Predicate<T> predicate) {
-		return new TransformCommandArgument<>(this, (execution, value) -> {
+		return new TransformCommandArgument<>(this, (execution, argument) -> {
+			final T value = execution.get(argument);
 			if (predicate.test(value)) return value;
 			else throw execution.invalidArgument();
 		});
 	}
 
 	default CommandArgument<T> check(@NotNull final Predicate<T> predicate, final String reasonKey, final String... formatArgs) {
-		return new TransformCommandArgument<>(this, (execution, value) -> {
+		return new TransformCommandArgument<>(this, (execution, argument) -> {
+			final T value = execution.get(argument);
 			if (predicate.test(value)) return value;
 			else throw execution.invalidArgument(reasonKey, formatArgs);
 		});
 	}
 
 	default CommandArgument<T> defaultValue(final T defaultValue) {
-		return new ProxyCommandArgument<T, T>(this) {
-			@Override public T parse(@NotNull final CommandExecution execution) throws CommandException {
-				if (execution.remains() == 0)
-					return defaultValue;
-				else
-					return source.parse(execution);
-			}
-		};
+		return new TransformCommandArgument<>(
+				this,
+				(execution, argument) -> execution.remains() == 0 ? defaultValue : execution.get(argument)
+		);
 	}
 
 	static ListedCommandArgument<String> of(@NotNull final Collection<String> values) {
@@ -169,9 +166,8 @@ public interface CommandArgument<T> {
 	TargetSelectorCommandArgument TARGET_SELECTOR = TargetSelectorCommandArgument.SINGLETON;
 
 	CommandArgument<List<Entity>> ENTITIES =
-			new ProxyCommandArgument<TargetSelector, List<Entity>>(CommandArgument.TARGET_SELECTOR) {
-				@Override public List<Entity> parse(@NotNull final CommandExecution execution) throws CommandException {
-					return this.source.parse(execution).get(execution.getSender());
-				}
-			};
+			new TransformCommandArgument<>(
+					TARGET_SELECTOR,
+					(execution, argument) -> execution.get(argument).get(execution.getSender())
+			);
 }
