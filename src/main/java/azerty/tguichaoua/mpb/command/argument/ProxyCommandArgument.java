@@ -14,8 +14,4 @@ public abstract class ProxyCommandArgument<T, R> implements CommandArgument<R> {
 	@Override public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
 		return source.complete(execution);
 	}
-
-	@Override public int multiplicity() {
-		return source.multiplicity();
-	}
 }

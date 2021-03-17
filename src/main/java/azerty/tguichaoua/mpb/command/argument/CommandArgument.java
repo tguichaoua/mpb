@@ -30,10 +30,6 @@ public interface CommandArgument<T> {
 		return Collections.emptyList();
 	}
 
-	default int multiplicity() {
-		return 1;
-	}
-
 	default <R> CommandArgument<R> then(@NotNull final Function<T, R> function) {
 		return new TransformCommandArgument<>(this, (execution, value) -> function.apply(value));
 	}
@@ -98,7 +94,7 @@ public interface CommandArgument<T> {
 			@Override
 			public @NotNull List<T> parse(@NotNull final CommandExecution execution) throws CommandException {
 				final List<T> values = new ArrayList<>(amount);
-				for (int i = 0; i < amount; i++) {
+				for (int i = amount; i > 0; i--) {
 					values.add(execution.get(argument));
 				}
 				return values;
@@ -106,11 +102,11 @@ public interface CommandArgument<T> {
 
 			@Override
 			public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
-				return argument.complete(execution);
-			}
-
-			@Override public int multiplicity() {
-				return amount;
+				Collection<String> complete = Collections.emptyList();
+				for (int i = amount; i > 0 && execution.remains() != 0; i--) {
+					complete = argument.complete(execution);
+				}
+				return complete;
 			}
 		};
 	}
@@ -128,11 +124,11 @@ public interface CommandArgument<T> {
 
 			@Override
 			public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
-				return argument.complete(execution);
-			}
-
-			@Override public int multiplicity() {
-				return Integer.MAX_VALUE;
+				Collection<String> complete = Collections.emptyList();
+				while (execution.remains() != 0) {
+					complete = argument.complete(execution);
+				}
+				return complete;
 			}
 		};
 	}

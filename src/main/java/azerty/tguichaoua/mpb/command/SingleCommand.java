@@ -28,10 +28,7 @@ public final class SingleCommand extends MyCommand {
 		Collection<String> completion = Collections.emptyList();
 		try {
 			for (final CommandArgument<?> arg : arguments) {
-				for (int i = arg.multiplicity(); i > 0; i--) {
-					completion = arg.complete(execution);
-					if (execution.remains() == 0) break;
-				}
+				completion = arg.complete(execution);
 				if (execution.remains() == 0) break;
 			}
 		} catch (final CommandException ignored) {
