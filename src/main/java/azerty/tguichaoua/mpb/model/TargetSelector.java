@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
@@ -21,6 +22,8 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -49,8 +52,8 @@ public class TargetSelector {
 	private final @Nullable NamePredicate name;
 	@Singular private final @Nullable Collection<TagPredicate> tags;
 	private final @Nullable TeamPredicate team;
+	private final @Nullable ScoresPredicate scores;
 
-	private final @Nullable Predicate<Entity> scores; // TODO
 	private final @Nullable Predicate<Entity> advancements; // TODO
 	private final @Nullable Predicate<Entity> nbt; // TODO
 
@@ -244,9 +247,7 @@ public class TargetSelector {
 		gamemode(false, (b, s) -> b.gameMode(GameModePredicate.parse(s))),
 		name(false, (b, s) -> b.name(NamePredicate.parse(s))),
 		tag(true, (b, s) -> b.tag(TagPredicate.parse(s))),
-		scores(false, (b, s) -> {
-			throw new RuntimeException("Not Implemented");
-		}), // TODO
+		scores(false, (b, s) -> b.scores(ScoresPredicate.parse(s))),
 		team(false, (b, s) -> TeamPredicate.parse(s)),
 		advancements(false, (b, s) -> {
 			throw new RuntimeException("Not Implemented");
@@ -406,6 +407,45 @@ public class TargetSelector {
 	}
 
 	@RequiredArgsConstructor
+	public static final class ScoresPredicate implements Predicate<Entity> {
+		private static final Pattern PATTERN = Pattern.compile("^\\{(?<scores>[^{}]*)}$");
+
+		private final Map<String, Range> scores;
+
+		@Override public boolean test(final Entity entity) {
+			for (final Objective o : Bukkit.getScoreboardManager().getMainScoreboard().getObjectives()) {
+				final Range range = scores.get(o.getName());
+				if (range != null) {
+					if (!range.contains(o.getScore(entity.getName()).getScore()))
+						return false;
+				}
+			}
+			return true;
+		}
+
+		public static ScoresPredicate parse(@NotNull final String s) {
+			final Matcher matcher = PATTERN.matcher(s);
+			if (matcher.matches()) {
+				final Map<String, Range> scores = new HashMap<>();
+				final String scoresString = matcher.group("scores");
+				if (scoresString != null) {
+					for (final String ss : scoresString.split(",")) {
+						final String[] kv = ss.split("=");
+						if (kv.length == 2) {
+							scores.put(kv[0], Range.parse(kv[1]));
+						} else {
+							throw new IllegalArgumentException();
+						}
+					}
+				}
+
+				return new ScoresPredicate(Collections.unmodifiableMap(scores));
+			}
+			throw new IllegalArgumentException();
+		}
+	}
+
+	@RequiredArgsConstructor
 	public static final class Range {
 		public final double min;
 		public final double max;
@@ -446,6 +486,7 @@ public class TargetSelector {
 		private final Builder builder = new Builder();
 		private @Nullable Property property = null;
 		private final Set<Property> setProperties = new HashSet<>();
+		private int subObjectLevel = 0;
 
 		public String getCurrentValue() {
 			return currentValue.toString();
@@ -518,9 +559,21 @@ public class TargetSelector {
 					break;
 				case ARGUMENT_VALUE:
 					switch (c) {
+						case '{':
+							subObjectLevel++;
+							currentValue.append(c);
+							break;
+						case '}':
+							if (subObjectLevel == 0) throw new IllegalArgumentException();
+							subObjectLevel--;
+							currentValue.append(c);
 						case ',':
-							parseValue();
-							state = State.ARGUMENT_NAME;
+							if (subObjectLevel == 0) {
+								parseValue();
+								state = State.ARGUMENT_NAME;
+							} else {
+								currentValue.append(c);
+							}
 							break;
 						case ']':
 							parseValue();
