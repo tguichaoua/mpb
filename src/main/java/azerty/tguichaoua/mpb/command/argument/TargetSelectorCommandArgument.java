@@ -36,7 +36,7 @@ public class TargetSelectorCommandArgument implements CommandArgument<TargetSele
 
 		while (!parser.getState().equals(TargetSelector.Parser.State.END)) {
 			try {
-				parser.consume(execution.nextArgument());
+				parser.consume(" " + execution.nextArgument());
 			} catch (final TargetSelector.InvalidFormatTargetSelectorParseException e) {
 				throw execution.invalidArgument(INVALID_FORMAT);
 			} catch (final TargetSelector.InvalidSelectorTargetSelectorParseException e) {
@@ -77,7 +77,7 @@ public class TargetSelectorCommandArgument implements CommandArgument<TargetSele
 				while (execution.remains() != 0 && !parser.getState().equals(TargetSelector.Parser.State.END)) {
 					last = execution.nextArgument();
 					try {
-						parser.consume(last);
+						parser.consume(" " + last);
 					} catch (final IllegalArgumentException e) {
 						return Collections.emptyList();
 					}

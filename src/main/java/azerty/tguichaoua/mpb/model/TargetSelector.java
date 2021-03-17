@@ -261,7 +261,7 @@ public class TargetSelector {
 			boolean reversed = false;
 			if (s.startsWith("!")) {
 				reversed = true;
-				s = s.substring(1);
+				s = s.substring(1).trim();
 			}
 			return ctor.apply(parser.apply(s), reversed);
 		}
@@ -470,7 +470,7 @@ public class TargetSelector {
 		private int subObjectLevel = 0;
 
 		public String getCurrentValue() {
-			return currentValue.toString();
+			return currentValue.toString().trim();
 		}
 
 		public Property getProperty() {
@@ -518,7 +518,7 @@ public class TargetSelector {
 					switch (c) {
 						case '=':
 							try {
-								property = Property.valueOf(currentValue.toString());
+								property = Property.valueOf(currentValue.toString().trim());
 							} catch (final IllegalArgumentException e) {
 								throw new InvalidArgumentTargetSelectorParseException(currentValue.toString(), e);
 							}
@@ -581,7 +581,7 @@ public class TargetSelector {
 		}
 
 		private void parseValue() {
-			final String value = currentValue.toString();
+			final String value = currentValue.toString().trim();
 			try {
 				Objects.requireNonNull(property).setter.accept(builder, value);
 			} catch (final IllegalArgumentException e) {
