@@ -54,9 +54,6 @@ public class TargetSelector {
 	private final @Nullable TeamPredicate team;
 	private final @Nullable ScoresPredicate scores;
 
-	private final @Nullable Predicate<Entity> advancements; // TODO
-	private final @Nullable Predicate<Entity> nbt; // TODO
-
 	// TODO : optimize ?
 	private @Nullable Vector dxyz() {
 		if (dx == null && dy == null && dz == null) return null;
@@ -90,8 +87,6 @@ public class TargetSelector {
 							&& (tags == null || tags.stream().allMatch(t -> t.test(target)))
 							&& (scores == null || scores.test(target))
 							&& (team == null || team.test(target))
-							&& (advancements == null || advancements.test(target))
-							&& (nbt == null || nbt.test(target))
 			) {
 				return Collections.singletonList((Entity) sender);
 			} else {
@@ -150,14 +145,6 @@ public class TargetSelector {
 			for (val tag : tags) {
 				entities = entities.filter(tag);
 			}
-		}
-
-		if (advancements != null) {
-			entities = entities.filter(advancements);
-		}
-
-		if (nbt != null) {
-			entities = entities.filter(nbt);
 		}
 
 		if (selector.equals(Selector.RANDOM)) {
@@ -248,14 +235,7 @@ public class TargetSelector {
 		name(false, (b, s) -> b.name(NamePredicate.parse(s))),
 		tag(true, (b, s) -> b.tag(TagPredicate.parse(s))),
 		scores(false, (b, s) -> b.scores(ScoresPredicate.parse(s))),
-		team(false, (b, s) -> b.team(TeamPredicate.parse(s))),
-		advancements(false, (b, s) -> {
-			throw new RuntimeException("Not Implemented");
-		}), // TODO
-		nbt(false, (b, s) -> {
-			throw new RuntimeException("Not Implemented");
-		}) // TODO
-		;
+		team(false, (b, s) -> b.team(TeamPredicate.parse(s)));
 
 		private final boolean allowMultiple;
 		private final @NotNull BiConsumer<TargetSelector.Builder, String> setter;
