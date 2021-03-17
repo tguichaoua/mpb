@@ -27,10 +27,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Builder(access = AccessLevel.PRIVATE, builderClassName = "Builder")
+@Builder(access = AccessLevel.PRIVATE)
 public class TargetSelector {
 
-	@lombok.Builder.Default private final @NotNull Selector selector = Selector.PLAYER;
+	@Builder.Default private final @NotNull Selector selector = Selector.PLAYER;
 
 	private final @Nullable Double x;
 	private final @Nullable Double y;
@@ -239,7 +239,7 @@ public class TargetSelector {
 		team(false, (b, s) -> b.team(TeamPredicate.parse(s)));
 
 		private final boolean allowMultiple;
-		private final @NotNull BiConsumer<TargetSelector.Builder, String> setter;
+		private final @NotNull BiConsumer<TargetSelector.TargetSelectorBuilder, String> setter;
 	}
 
 	@RequiredArgsConstructor
@@ -464,7 +464,7 @@ public class TargetSelector {
 
 		@Getter private State state = State.AT;
 		private final StringBuilder currentValue = new StringBuilder();
-		private final Builder builder = new Builder();
+		private final TargetSelectorBuilder builder = new TargetSelectorBuilder();
 		private @Nullable Property property = null;
 		private final Set<Property> setProperties = new HashSet<>();
 		private int subObjectLevel = 0;
@@ -655,5 +655,8 @@ public class TargetSelector {
 			this.property = property;
 		}
 	}
+
+	// must be kept to avoid javadoc warning
+	private static class TargetSelectorBuilder {}
 }
 

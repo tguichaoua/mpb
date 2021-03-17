@@ -79,7 +79,7 @@ public final class CommandExecution {
 	 * Returns the current argument.
 	 *
 	 * @return the current argument
-	 * @throws CommandException if {@link this#remains()} is 0
+	 * @throws CommandException if {@link CommandExecution#remains()} is 0
 	 */
 	public String current() throws CommandException {
 		if (currentArg == args.length) throw new CommandException(CommandException.Type.MISSING_ARGUMENT, this);
@@ -90,7 +90,7 @@ public final class CommandExecution {
 	 * Returns the current argument and move next.
 	 *
 	 * @return the current argument
-	 * @throws CommandException if {@link this#remains()} is 0
+	 * @throws CommandException if {@link CommandExecution#remains()} is 0
 	 */
 	public String nextArgument() throws CommandException {
 		if (currentArg == args.length) throw new CommandException(CommandException.Type.MISSING_ARGUMENT, this);
@@ -100,7 +100,7 @@ public final class CommandExecution {
 	/**
 	 * Move to the next argument.
 	 *
-	 * @throws CommandException if {@link this#remains()} is 0
+	 * @throws CommandException if {@link CommandExecution#remains()} is 0
 	 */
 	public void next() throws CommandException {
 		if (currentArg == args.length) throw new CommandException(CommandException.Type.MISSING_ARGUMENT, this);
@@ -109,10 +109,10 @@ public final class CommandExecution {
 
 	/**
 	 * Move to the next arguments.
-	 * Equivalent to call {@link this#next()} multiple time.
+	 * Equivalent to call {@link CommandExecution#next()} multiple time.
 	 *
 	 * @param count how many argument to pass.
-	 * @throws CommandException if {@link this#remains()} is lower than {@code count}
+	 * @throws CommandException if {@link CommandExecution#remains()} is lower than {@code count}
 	 */
 	public void next(final int count) throws CommandException {
 		currentArg += count;
