@@ -66,25 +66,54 @@ public final class CommandExecution {
 		if (!sender.hasPermission(permission)) throw new CommandException(CommandException.Type.PERMISSION, this);
 	}
 
+	/**
+	 * Returns the number of remaining arguments.
+	 *
+	 * @return the number of remaining arguments
+	 */
 	public int remains() {
 		return args.length - currentArg;
 	}
 
+	/**
+	 * Returns the current argument.
+	 *
+	 * @return the current argument
+	 * @throws CommandException if {@link this#remains()} is 0
+	 */
 	public String current() throws CommandException {
 		if (currentArg == args.length) throw new CommandException(CommandException.Type.MISSING_ARGUMENT, this);
 		return args[currentArg];
 	}
 
+	/**
+	 * Returns the current argument and move next.
+	 *
+	 * @return the current argument
+	 * @throws CommandException if {@link this#remains()} is 0
+	 */
 	public String nextArgument() throws CommandException {
 		if (currentArg == args.length) throw new CommandException(CommandException.Type.MISSING_ARGUMENT, this);
 		return args[currentArg++];
 	}
 
+	/**
+	 * Move to the next argument.
+	 *
+	 * @throws CommandException if {@link this#remains()} is 0
+	 */
 	public void next() throws CommandException {
 		if (currentArg == args.length) throw new CommandException(CommandException.Type.MISSING_ARGUMENT, this);
 		currentArg++;
 	}
 
+	/**
+	 * Move to the next arguments.
+	 * Equivalent to call {@link this#next()} multiple time.
+	 *
+	 * @param count how many argument to pass.
+	 * @throws CommandException if {@link this#remains()} is lower than {@code count}
+	 */
 	public void next(final int count) throws CommandException {
 		currentArg += count;
 		if (currentArg >= args.length) {
@@ -93,14 +122,34 @@ public final class CommandExecution {
 		}
 	}
 
+	/**
+	 * Parses and returns the next argument using the {@code parser}.
+	 *
+	 * @param parser the parser used to parse next argument
+	 * @param <T>    type of the argument
+	 * @return the parsed argument
+	 * @throws CommandException if the parsing fail
+	 */
 	public <T> T get(final CommandArgument<T> parser) throws CommandException {
 		return parser.parse(this);
 	}
 
+	/**
+	 * Creates a {@link CommandException} to indicate that current argument cannot be parsed or is invalid.
+	 *
+	 * @param reasonKey  the reason key used to get the message to display
+	 * @param formatArgs the argument passed to {@link String#format(String, Object...)}
+	 * @return the {@link CommandException}
+	 */
 	public CommandException invalidArgument(@Nullable final String reasonKey, final String... formatArgs) {
 		return new CommandException(CommandException.Type.INVALID_ARGUMENT, this, reasonKey, formatArgs);
 	}
 
+	/**
+	 * Creates a {@link CommandException} to indicate that current argument cannot be parsed or is invalid.
+	 *
+	 * @return the {@link CommandException}
+	 */
 	public CommandException invalidArgument() {
 		return invalidArgument(null);
 	}
