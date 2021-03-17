@@ -3,12 +3,14 @@ package azerty.tguichaoua.mpb.model;
 import azerty.tguichaoua.mpb.util.CommandUtils;
 import lombok.*;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -46,9 +48,9 @@ public class TargetSelector {
 	private final @Nullable GameModePredicate gameMode;
 	private final @Nullable NamePredicate name;
 	@Singular private final @Nullable Collection<TagPredicate> tags;
+	private final @Nullable TeamPredicate team;
 
 	private final @Nullable Predicate<Entity> scores; // TODO
-	private final @Nullable Predicate<Entity> team; // TODO
 	private final @Nullable Predicate<Entity> advancements; // TODO
 	private final @Nullable Predicate<Entity> nbt; // TODO
 
@@ -245,9 +247,7 @@ public class TargetSelector {
 		scores(false, (b, s) -> {
 			throw new RuntimeException("Not Implemented");
 		}), // TODO
-		team(false, (b, s) -> {
-			throw new RuntimeException("Not Implemented");
-		}), // TODO
+		team(false, (b, s) -> TeamPredicate.parse(s)),
 		advancements(false, (b, s) -> {
 			throw new RuntimeException("Not Implemented");
 		}), // TODO
@@ -380,6 +380,28 @@ public class TargetSelector {
 
 		public static YRotationPredicate parse(@NotNull final String s) {
 			return parse(s, Range::parse, YRotationPredicate::new);
+		}
+	}
+
+	public static final class TeamPredicate extends PropertyPredicate<String> {
+		public TeamPredicate(final String teamName, final boolean reversed) {
+			super(teamName, reversed);
+		}
+
+		@Override protected boolean test(final Entity entity, final String teamName) {
+			if (teamName.equals("")) {
+				// Filter to those who are teamless.
+				return Bukkit.getScoreboardManager().getMainScoreboard().getTeams()
+						.stream()
+						.noneMatch(t -> t.hasEntry(entity.getName()));
+			} else {
+				final Team team = Bukkit.getScoreboardManager().getMainScoreboard().getTeam(teamName);
+				return team != null && team.hasEntry(entity.getName());
+			}
+		}
+
+		public static TeamPredicate parse(@NotNull final String s) {
+			return parse(s, o -> o, TeamPredicate::new);
 		}
 	}
 
