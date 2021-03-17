@@ -46,7 +46,7 @@ public class TargetSelector {
 	private final @Nullable XRotationPredicate xRotation;
 	private final @Nullable YRotationPredicate yRotation;
 
-	private final @Nullable TypePredicate type;
+	@Singular private final @Nullable Collection<TypePredicate> types;
 	private final @Nullable LevelPredicate level;
 	private final @Nullable GameModePredicate gameMode;
 	private final @Nullable NamePredicate name;
@@ -82,7 +82,7 @@ public class TargetSelector {
 							&& (name == null || name.test(target))
 							&& (xRotation == null || xRotation.test(target))
 							&& (yRotation == null || yRotation.test(target))
-							&& (type == null || type.test(target))
+							&& (types == null || types.stream().allMatch(t -> t.test(target)))
 							&& (tags == null || tags.stream().allMatch(t -> t.test(target)))
 							&& (scores == null || scores.test(target))
 							&& (team == null || team.test(target))
@@ -136,8 +136,10 @@ public class TargetSelector {
 			entities = entities.filter(yRotation);
 		}
 
-		if (type != null) {
-			entities = entities.filter(type);
+		if (types != null) {
+			for (val type : types) {
+				entities = entities.filter(type);
+			}
 		}
 
 		if (tags != null) {
@@ -228,7 +230,7 @@ public class TargetSelector {
 		limit(false, (b, s) -> b.limit(Integer.parseInt(s))),
 		x_rotation(false, (b, s) -> b.xRotation(XRotationPredicate.parse(s))),
 		y_rotation(false, (b, s) -> b.yRotation(YRotationPredicate.parse(s))),
-		type(false, (b, s) -> b.type(TypePredicate.parse(s))),
+		type(true, (b, s) -> b.type(TypePredicate.parse(s))),
 		level(false, (b, s) -> b.level(LevelPredicate.parse(s))),
 		gamemode(false, (b, s) -> b.gameMode(GameModePredicate.parse(s))),
 		name(false, (b, s) -> b.name(NamePredicate.parse(s))),
