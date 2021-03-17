@@ -28,7 +28,17 @@ public class TargetSelectorCommandArgument implements CommandArgument<TargetSele
 	@Override public TargetSelector parse(@NotNull final CommandExecution execution) throws CommandException {
 		final TargetSelector.Parser parser = new TargetSelector.Parser();
 
-		parser.consume(execution.nextArgument());
+		try {
+			parser.consume(execution.nextArgument());
+		} catch (final TargetSelector.InvalidFormatTargetSelectorParseException e) {
+			throw execution.invalidArgument(INVALID_FORMAT);
+		} catch (final TargetSelector.InvalidSelectorTargetSelectorParseException e) {
+			throw execution.invalidArgument(INVALID_SELECTOR, e.getSelector());
+		} catch (final TargetSelector.InvalidArgumentTargetSelectorParseException e) {
+			throw execution.invalidArgument(INVALID_ARGUMENT, e.getArgument());
+		} catch (final TargetSelector.InvalidArgumentValueTargetSelectorParseException e) {
+			throw execution.invalidArgument(INVALID_ARGUMENT_VALUE, e.getValue());
+		}
 
 		if (parser.getState().equals(TargetSelector.Parser.State.BEFORE_ARGUMENTS)) {
 			return parser.get();
