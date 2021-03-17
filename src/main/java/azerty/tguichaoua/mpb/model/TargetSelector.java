@@ -532,7 +532,12 @@ public class TargetSelector {
 							state = State.ARGUMENT_VALUE;
 							break;
 						case ']':
-							throw new InvalidFormatTargetSelectorParseException();
+							if (getCurrentValue().equals("")) {
+								state = State.END;
+							} else {
+								throw new InvalidFormatTargetSelectorParseException();
+							}
+							break;
 						default:
 							currentValue.append(c);
 							break;
