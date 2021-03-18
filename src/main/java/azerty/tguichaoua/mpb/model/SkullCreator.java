@@ -53,17 +53,6 @@ public class SkullCreator {
 	}
 
 	/**
-	 * Creates a player skull item with the skin based on a player's name.
-	 *
-	 * @param name The Player's name.
-	 * @return The head of the Player.
-	 * @deprecated names don't make for good identifiers.
-	 */
-	public static ItemStack itemFromName(final @NotNull String name) {
-		return itemWithName(createSkull(), name);
-	}
-
-	/**
 	 * Creates a player skull item with the skin based on a player's UUID.
 	 *
 	 * @param id The Player's UUID.
@@ -91,23 +80,6 @@ public class SkullCreator {
 	 */
 	public static ItemStack itemFromBase64(final @NotNull String base64) {
 		return itemWithBase64(createSkull(), base64);
-	}
-
-	/**
-	 * Modifies a skull to use the skin of the player with a given name.
-	 *
-	 * @param item The item to apply the name to. Must be a player skull.
-	 * @param name The Player's name.
-	 * @return The head of the Player.
-	 * @deprecated names don't make for good identifiers.
-	 */
-	@Deprecated
-	public static ItemStack itemWithName(final @NotNull ItemStack item, final @NotNull String name) {
-		final SkullMeta meta = (SkullMeta) item.getItemMeta();
-		meta.setOwner(name);
-		item.setItemMeta(meta);
-
-		return item;
 	}
 
 	/**
@@ -152,20 +124,6 @@ public class SkullCreator {
 		item.setItemMeta(meta);
 
 		return item;
-	}
-
-	/**
-	 * Sets the block to a skull with the given name.
-	 *
-	 * @param block The block to set.
-	 * @param name  The player to set it to.
-	 * @deprecated names don't make for good identifiers.
-	 */
-	@Deprecated
-	public static void blockWithName(final @NotNull Block block, final @NotNull String name) {
-		final Skull state = (Skull) block.getState();
-		state.setOwningPlayer(Bukkit.getOfflinePlayer(name));
-		state.update(false, false);
 	}
 
 	/**
