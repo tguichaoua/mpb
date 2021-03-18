@@ -56,6 +56,7 @@ public interface CommandArgument<T> {
 		);
 	}
 
+	// --- Collections -------------------------------------------
 	static ListedCommandArgument<String> of(@NotNull final Collection<String> values) {
 		return new ListedCommandArgument<>(values::stream, s -> s);
 	}
@@ -68,21 +69,48 @@ public interface CommandArgument<T> {
 		return new ListedCommandArgument<>(() -> map.keySet().stream(), map::get);
 	}
 
-	static <E extends Enum<E>> ListedCommandArgument<E> of(@NotNull final Class<E> clazz, @NotNull final Predicate<E> predicate) {
+	// --- Enum ----------------------------------------------------------
+	static <E extends Enum<E>> ListedCommandArgument<E> of(
+			@NotNull final Class<E> clazz,
+			@NotNull final Predicate<E> predicate,
+			final boolean ignoreCase
+	) {
 		final List<String> values = Arrays.stream(clazz.getEnumConstants())
 				.filter(predicate)
-				.map(Enum::name)
+				.map(ignoreCase ? e -> e.name().toLowerCase() : Enum::name)
 				.collect(Collectors.toList());
+
+		final Function<String, E> parser =
+				ignoreCase ?
+						s -> Arrays.stream(clazz.getEnumConstants())
+								.filter(e -> e.name().equalsIgnoreCase(s)).findAny().orElse(null) :
+						s -> Enum.valueOf(clazz, s);
+
 		return new ListedCommandArgument<>(
 				values::stream,
-				s -> Enum.valueOf(clazz, s)
+				parser
 		);
 	}
 
-	static <E extends Enum<E>> ListedCommandArgument<E> of(@NotNull final Class<E> clazz) {
-		return of(clazz, e -> true);
+	static <E extends Enum<E>> ListedCommandArgument<E> of(
+			@NotNull final Class<E> clazz,
+			@NotNull final Predicate<E> predicate
+	) {
+		return of(clazz, predicate, false);
 	}
 
+	static <E extends Enum<E>> ListedCommandArgument<E> of(
+			@NotNull final Class<E> clazz,
+			final boolean ignoreCase
+	) {
+		return of(clazz, e -> true, ignoreCase);
+	}
+
+	static <E extends Enum<E>> ListedCommandArgument<E> of(@NotNull final Class<E> clazz) {
+		return of(clazz, e -> true, false);
+	}
+
+	// --- Repeating arguments ------------------------------------------------
 	static <T> CommandArgument<@NotNull List<T>> repeat(
 			@NotNull final CommandArgument<T> argument,
 			final int amount
@@ -136,23 +164,23 @@ public interface CommandArgument<T> {
 	DoubleCommandArgument DOUBLE = DoubleCommandArgument.SINGLETON;
 
 	// -- Bukkit Enums
-	ListedCommandArgument<Art> ART = of(Art.class);
-	ListedCommandArgument<Attribute> ATTRIBUTE = of(Attribute.class);
-	ListedCommandArgument<Biome> BIOME = of(Biome.class);
-	ListedCommandArgument<BlockFace> BLOCK_FACE = of(BlockFace.class);
-	ListedCommandArgument<Difficulty> DIFFICULTY = of(Difficulty.class);
-	ListedCommandArgument<DyeColor> DYE_COLOR = of(DyeColor.class);
-	ListedCommandArgument<Effect> EFFECT = of(Effect.class);
-	ListedCommandArgument<EntityType> ENTITY_TYPE = of(EntityType.class);
-	ListedCommandArgument<EquipmentSlot> EQUIPMENT_SLOT = of(EquipmentSlot.class);
-	ListedCommandArgument<GameMode> GAME_MODE = of(GameMode.class);
-	ListedCommandArgument<Material> MATERIAL = of(Material.class);
-	ListedCommandArgument<Particle> PARTICLE = of(Particle.class);
-	ListedCommandArgument<PatternType> PATTERN_TYPE = of(PatternType.class);
-	ListedCommandArgument<PotionType> POTION_TYPE = of(PotionType.class);
-	ListedCommandArgument<Sound> SOUND = of(Sound.class);
-	ListedCommandArgument<SoundCategory> SOUND_CATEGORY = of(SoundCategory.class);
-	ListedCommandArgument<Statistic> STATISTIC = of(Statistic.class);
+	ListedCommandArgument<Art> ART = of(Art.class, true);
+	ListedCommandArgument<Attribute> ATTRIBUTE = of(Attribute.class, true);
+	ListedCommandArgument<Biome> BIOME = of(Biome.class, true);
+	ListedCommandArgument<BlockFace> BLOCK_FACE = of(BlockFace.class, true);
+	ListedCommandArgument<Difficulty> DIFFICULTY = of(Difficulty.class, true);
+	ListedCommandArgument<DyeColor> DYE_COLOR = of(DyeColor.class, true);
+	ListedCommandArgument<Effect> EFFECT = of(Effect.class, true);
+	ListedCommandArgument<EntityType> ENTITY_TYPE = of(EntityType.class, true);
+	ListedCommandArgument<EquipmentSlot> EQUIPMENT_SLOT = of(EquipmentSlot.class, true);
+	ListedCommandArgument<GameMode> GAME_MODE = of(GameMode.class, true);
+	ListedCommandArgument<Material> MATERIAL = of(Material.class, true);
+	ListedCommandArgument<Particle> PARTICLE = of(Particle.class, true);
+	ListedCommandArgument<PatternType> PATTERN_TYPE = of(PatternType.class, true);
+	ListedCommandArgument<PotionType> POTION_TYPE = of(PotionType.class, true);
+	ListedCommandArgument<Sound> SOUND = of(Sound.class, true);
+	ListedCommandArgument<SoundCategory> SOUND_CATEGORY = of(SoundCategory.class, true);
+	ListedCommandArgument<Statistic> STATISTIC = of(Statistic.class, true);
 
 	// -- Misc
 	ListedCommandArgument<@Nullable Player> ONLINE_PLAYER =
