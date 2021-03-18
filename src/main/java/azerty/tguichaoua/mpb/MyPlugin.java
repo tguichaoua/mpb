@@ -35,15 +35,6 @@ public abstract class MyPlugin extends JavaPlugin implements Listener {
 	}
 
 	// Utils
-
-	/**
-	 * @deprecated use {@link MyPlugin#registerEvents(Listener)} instead
-	 */
-	@Deprecated
-	public final void registerEvent(final Listener listener) {
-		getServer().getPluginManager().registerEvents(listener, this);
-	}
-
 	public final <T extends Listener> T registerEvents(final T listener) {
 		getServer().getPluginManager().registerEvents(listener, this);
 		return listener;
