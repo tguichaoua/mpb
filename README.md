@@ -5,7 +5,10 @@
 ## Features
 
 - Shortcut/util methods for plugin
-- Command handler
+- Commands
+  - Automatic argument parsing
+  - Automatic completation
+  - Extensible
 - Inventory based menu
 
 ## Docs
@@ -26,7 +29,7 @@
     <dependency>
         <groupId>com.github.tguichaoua</groupId>
         <artifactId>mpb</artifactId>
-        <version>0.5.0</version>
+        <version>1.0.0</version>
     </dependency>
 </dependencies>
 ```
