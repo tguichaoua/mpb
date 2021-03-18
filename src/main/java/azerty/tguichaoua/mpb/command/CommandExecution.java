@@ -39,6 +39,10 @@ public final class CommandExecution {
 		this.label += " " + label;
 	}
 
+	int getCurrentParsedArgumentIndex() {
+		return currentParsedArgument != null ? currentParsedArgument : currentArg;
+	}
+
 	@NotNull String getCurrentParsedArgument() {
 		if (currentParsedArgument == null)
 			return args[currentArg];

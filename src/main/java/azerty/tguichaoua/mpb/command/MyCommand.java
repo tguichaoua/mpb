@@ -4,13 +4,14 @@ import azerty.tguichaoua.mpb.command.argument.DoubleCommandArgument;
 import azerty.tguichaoua.mpb.command.argument.IntegerCommandArgument;
 import azerty.tguichaoua.mpb.command.argument.ListedCommandArgument;
 import azerty.tguichaoua.mpb.command.argument.TargetSelectorCommandArgument;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.ChatColor;
 import org.bukkit.command.*;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class MyCommand implements CommandExecutor, TabCompleter {
 
@@ -36,28 +37,42 @@ public abstract class MyCommand implements CommandExecutor, TabCompleter {
 		try {
 			execute(execution);
 		} catch (final CommandException e) {
-			String message = "";
+			final StringBuilder message = new StringBuilder(ChatColor.RED + getExceptionMessage(e.getType().key));
 
 			switch (e.getType()) {
-				case PERMISSION:
-				case MISSING_ARGUMENT:
-					message = getExceptionMessage(e.getType().key);
-					break;
 				case UNKNOWN_COMMAND:
-					message = String.format("%s \"/%s\"", getExceptionMessage(e.getType().key), e.getLabel());
+					message.append(" \"/");
+					message.append(e.getLabel());
+					message.append('"');
 					break;
 				case INVALID_ARGUMENT:
-					message = String.format("%s \"%s\"", getExceptionMessage(e.getType().key), e.getArgument());
+					message.append(ChatColor.RESET)
+							.append('\n')
+							.append(label)
+							.append(" ")
+							.append(
+									Arrays.stream(args)
+											.limit(execution.getCurrentParsedArgumentIndex())
+											.collect(Collectors.joining(" "))
+							)
+							.append(" ")
+							.append(ChatColor.RED)
+							.append(ChatColor.UNDERLINE)
+							.append(e.getArgument())
+							.append("<--");
+
 					if (e.getReasonKey() != null) {
 						final String s = getExceptionMessage(e.getReasonKey());
 						if (s != null) {
-							message += "\n" + String.format(s, (Object[]) e.getFormatArgs());
+							message.append(ChatColor.RESET)
+									.append('\n')
+									.append(String.format(s, (Object[]) e.getFormatArgs()));
 						}
 					}
 					break;
 			}
 
-			commandSender.sendMessage(new ComponentBuilder(message).create());
+			commandSender.sendMessage(message.toString());
 		} catch (final Throwable t) {
 			t.printStackTrace();
 		}
@@ -87,7 +102,7 @@ public abstract class MyCommand implements CommandExecutor, TabCompleter {
 		DEFAULT_MESSAGE.put(CommandException.Type.PERMISSION.key, "You have not the permission to run this command.");
 		DEFAULT_MESSAGE.put(CommandException.Type.UNKNOWN_COMMAND.key, "Unknown command");
 		DEFAULT_MESSAGE.put(CommandException.Type.MISSING_ARGUMENT.key, "More arguments are required.");
-		DEFAULT_MESSAGE.put(CommandException.Type.INVALID_ARGUMENT.key, "Invalid argument");
+		DEFAULT_MESSAGE.put(CommandException.Type.INVALID_ARGUMENT.key, "Incorrect argument");
 
 		DEFAULT_MESSAGE.put(IntegerCommandArgument.INVALID_ARGUMENT, "The value should be an integer.");
 		DEFAULT_MESSAGE.put(DoubleCommandArgument.INVALID_ARGUMENT, "The value should be a double.");
