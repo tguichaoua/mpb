@@ -46,6 +46,7 @@ public class TargetSelectorCommandArgument implements CommandArgument<TargetSele
 		}
 
 		while (!parser.getState().equals(TargetSelector.Parser.State.END)) {
+			if (execution.remains() == 0) throw execution.invalidArgument(INVALID_FORMAT);
 			try {
 				parser.consume(" " + execution.nextArgument());
 			} catch (final TargetSelector.InvalidFormatTargetSelectorParseException e) {
