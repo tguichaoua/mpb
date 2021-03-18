@@ -129,7 +129,7 @@ public class TargetSelectorCommandArgument implements CommandArgument<TargetSele
 		final String start = last.substring(0, i + 1);
 		final String name = currentValue.startsWith("!") ? currentValue.substring(1).trim() : currentValue;
 		final List<String> complete = Arrays.stream(clazz.getEnumConstants())
-				.map(Enum::toString)
+				.map(e -> e.toString().toLowerCase())
 				.filter(s -> s.startsWith(name))
 				.map(s -> start + s)
 				.collect(Collectors.toList());

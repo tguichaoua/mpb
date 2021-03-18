@@ -291,7 +291,7 @@ public class TargetSelector {
 		}
 
 		public static GameModePredicate parse(@NotNull final String s) {
-			return parse(s, GameMode::valueOf, GameModePredicate::new);
+			return parse(s, o -> GameMode.valueOf(o.toUpperCase()), GameModePredicate::new);
 		}
 	}
 
@@ -319,7 +319,7 @@ public class TargetSelector {
 		}
 
 		public static TypePredicate parse(@NotNull final String s) {
-			return parse(s, EntityType::valueOf, TypePredicate::new);
+			return parse(s, o -> EntityType.valueOf(o.toUpperCase()), TypePredicate::new);
 		}
 	}
 
