@@ -29,6 +29,7 @@ public final class SingleCommand extends MyCommand {
 		try {
 			for (final CommandArgument<?> arg : arguments) {
 				completion = arg.complete(execution);
+				execution.endArgument();
 				if (execution.remains() == 0) break;
 			}
 		} catch (final CommandException ignored) {

@@ -32,8 +32,9 @@ public abstract class MyCommand implements CommandExecutor, TabCompleter {
 			@NotNull final String label,
 			@NotNull final String[] args
 	) {
+		final CommandExecution execution = new CommandExecution(commandSender, label, args);
 		try {
-			execute(new CommandExecution(commandSender, label, args));
+			execute(execution);
 		} catch (final CommandException e) {
 			String message = "";
 
@@ -46,7 +47,7 @@ public abstract class MyCommand implements CommandExecutor, TabCompleter {
 					message = String.format("%s \"/%s\"", getExceptionMessage(e.getType().key), e.getLabel());
 					break;
 				case INVALID_ARGUMENT:
-					message = String.format("%s \"%s\"", getExceptionMessage(e.getType().key), args[e.getAt() - 1]);
+					message = String.format("%s \"%s\"", getExceptionMessage(e.getType().key), e.getArgument());
 					if (e.getReasonKey() != null) {
 						final String s = getExceptionMessage(e.getReasonKey());
 						if (s != null) {

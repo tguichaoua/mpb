@@ -29,6 +29,7 @@ public class TargetSelectorCommandArgument implements CommandArgument<TargetSele
 	@Override public TargetSelector parse(@NotNull final CommandExecution execution) throws CommandException {
 		final TargetSelector.Parser parser = new TargetSelector.Parser();
 
+		execution.beginArgument();
 		try {
 			parser.consume(execution.nextArgument());
 		} catch (final TargetSelector.InvalidFormatTargetSelectorParseException e) {
@@ -60,6 +61,7 @@ public class TargetSelectorCommandArgument implements CommandArgument<TargetSele
 			}
 		}
 
+		execution.endArgument();
 		return parser.get();
 	}
 

@@ -10,7 +10,7 @@ public class CommandException extends Exception {
 
 	@Getter private final Type type;
 	@Getter private final String label;
-	@Getter private final int at;
+	@Getter private final String argument;
 	@Getter private final @Nullable String reasonKey;
 	@Getter private final String[] formatArgs;
 
@@ -23,7 +23,7 @@ public class CommandException extends Exception {
 		super();
 		this.type = type;
 		this.label = execution.getLabel();
-		this.at = execution.getCurrentArg();
+		this.argument = execution.getCurrentParsedArgument();
 		this.reasonKey = reasonKey;
 		this.formatArgs = formatArgs;
 	}

@@ -12,6 +12,9 @@ import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 
 public final class CommandExecution {
 
@@ -19,6 +22,7 @@ public final class CommandExecution {
 	@Getter private @NotNull String label;
 	private final @NotNull String[] args;
 
+	private @Nullable Integer currentParsedArgument = null;
 	@Getter(AccessLevel.PACKAGE) private int currentArg = 0;
 
 	CommandExecution(
@@ -33,6 +37,13 @@ public final class CommandExecution {
 
 	void pushLabel(@NotNull final String label) {
 		this.label += " " + label;
+	}
+
+	@NotNull String getCurrentParsedArgument() {
+		if (currentParsedArgument == null)
+			return args[currentArg];
+		else
+			return Arrays.stream(args).skip(currentParsedArgument).limit(currentArg - currentParsedArgument + 1).collect(Collectors.joining(" "));
 	}
 
 	/**
@@ -132,6 +143,20 @@ public final class CommandExecution {
 	 */
 	public <T> T get(final CommandArgument<T> parser) throws CommandException {
 		return parser.parse(this);
+	}
+
+	/**
+	 * Used to specified that a single argument that need to aggregate multiple value has start.
+	 */
+	public void beginArgument() {
+		currentParsedArgument = currentArg;
+	}
+
+	/**
+	 * Used to specified that a single argument that need to aggregate multiple value has end.
+	 */
+	public void endArgument() {
+		currentParsedArgument = null;
 	}
 
 	/**
