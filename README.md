@@ -5,7 +5,10 @@
 ## Features
 
 - Shortcut/util methods for plugin
-- Command handler
+- Commands
+  - Automatic argument parsing
+  - Automatic completation
+  - Extensible
 - Inventory based menu
 
 ## Docs
