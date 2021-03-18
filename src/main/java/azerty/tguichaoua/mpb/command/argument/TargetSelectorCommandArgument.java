@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class TargetSelectorCommandArgument implements CommandArgument<TargetSelector> {
@@ -126,10 +127,17 @@ public class TargetSelectorCommandArgument implements CommandArgument<TargetSele
 		final int i = Math.max(last.lastIndexOf('!'), last.lastIndexOf('='));
 		final String start = last.substring(0, i + 1);
 		final String name = currentValue.startsWith("!") ? currentValue.substring(1).trim() : currentValue;
-		return Arrays.stream(clazz.getEnumConstants())
+		final List<String> complete = Arrays.stream(clazz.getEnumConstants())
 				.map(Enum::toString)
 				.filter(s -> s.startsWith(name))
 				.map(s -> start + s)
 				.collect(Collectors.toList());
+		if (
+				(complete.size() == 1 && complete.get(0).equals(name)) ||
+						(last.equals("") && !name.equals(""))
+		) {
+			return Collections.emptyList();
+		}
+		return complete;
 	}
 }
