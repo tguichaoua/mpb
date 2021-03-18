@@ -26,7 +26,7 @@
     <dependency>
         <groupId>com.github.tguichaoua</groupId>
         <artifactId>mpb</artifactId>
-        <version>0.5.0</version>
+        <version>1.0.0</version>
     </dependency>
 </dependencies>
 ```
