@@ -485,7 +485,7 @@ public class TargetSelector {
 		public void consume(final char c) {
 			switch (state) {
 				case AT:
-					if (c != '@') throw new IllegalArgumentException("Expecting \"@\"");
+					if (c != '@') throw new InvalidFormatTargetSelectorParseException();
 					state = State.SELECTOR;
 					break;
 				case SELECTOR:
@@ -511,7 +511,7 @@ public class TargetSelector {
 					state = State.BEFORE_ARGUMENTS;
 					break;
 				case BEFORE_ARGUMENTS:
-					if (c != '[') throw new IllegalArgumentException("Expecting \"[\"");
+					if (c != '[') throw new InvalidFormatTargetSelectorParseException();
 					state = State.ARGUMENT_NAME;
 					break;
 				case ARGUMENT_NAME:
@@ -550,7 +550,7 @@ public class TargetSelector {
 							currentValue.append(c);
 							break;
 						case '}':
-							if (subObjectLevel == 0) throw new IllegalArgumentException();
+							if (subObjectLevel == 0) throw new InvalidFormatTargetSelectorParseException();
 							subObjectLevel--;
 							currentValue.append(c);
 						case ',':
@@ -571,7 +571,7 @@ public class TargetSelector {
 					}
 					break;
 				case END:
-					throw new IllegalArgumentException();
+					throw new InvalidFormatTargetSelectorParseException();
 			}
 		}
 
