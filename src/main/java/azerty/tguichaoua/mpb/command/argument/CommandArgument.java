@@ -158,6 +158,24 @@ public interface CommandArgument<T> {
 		};
 	}
 
+	// --- Special ---------------------------------------------------------
+
+	/**
+	 * A special {@link CommandArgument} that consume no argument and return the passed value.
+	 * It's reserved for specific use of case.
+	 *
+	 * @param value the value to return
+	 * @param <T>   the type of the value to return
+	 * @return a special {@link CommandArgument} that return the passed value
+	 */
+	static <T> CommandArgument<T> constant(final T value) {
+		return new CommandArgument<T>() {
+			@Override public T parse(@NotNull final CommandExecution execution) { return value; }
+
+			@Override public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) { return Collections.emptyList(); }
+		};
+	}
+
 	// -- Single value
 	CommandArgument<String> STRING = CommandExecution::nextArgument;
 	IntegerCommandArgument INTEGER = IntegerCommandArgument.SINGLETON;
