@@ -158,6 +158,52 @@ public interface CommandArgument<T> {
 		};
 	}
 
+	// --- Cascade ---------------------------------------------------------
+	static <A, B, C, D, E, F> CascadeCommandArgument<A, B, C, D, E, F> cascade(
+			@NotNull final CommandArgument<A> source,
+			@NotNull final Function<A, @NotNull CommandArgument<B>> transform1,
+			@NotNull final Function<B, @NotNull CommandArgument<C>> transform2,
+			@NotNull final Function<C, @NotNull CommandArgument<D>> transform3,
+			@NotNull final Function<D, @NotNull CommandArgument<E>> transform4,
+			@NotNull final Function<E, @NotNull CommandArgument<F>> transform5
+	) {
+		return CascadeCommandArgument.of(source, transform1, transform2, transform3, transform4, transform5);
+	}
+
+	static <A, B, C, D, E> CascadeCommandArgument<A, B, C, D, E, E> cascade(
+			@NotNull final CommandArgument<A> source,
+			@NotNull final Function<A, @NotNull CommandArgument<B>> transform1,
+			@NotNull final Function<B, @NotNull CommandArgument<C>> transform2,
+			@NotNull final Function<C, @NotNull CommandArgument<D>> transform3,
+			@NotNull final Function<D, @NotNull CommandArgument<E>> transform4
+	) {
+		return CascadeCommandArgument.of(source, transform1, transform2, transform3, transform4);
+	}
+
+	static <A, B, C, D> CascadeCommandArgument<A, B, C, D, D, D> cascade(
+			@NotNull final CommandArgument<A> source,
+			@NotNull final Function<A, @NotNull CommandArgument<B>> transform1,
+			@NotNull final Function<B, @NotNull CommandArgument<C>> transform2,
+			@NotNull final Function<C, @NotNull CommandArgument<D>> transform3
+	) {
+		return CascadeCommandArgument.of(source, transform1, transform2, transform3);
+	}
+
+	static <A, B, C> CascadeCommandArgument<A, B, C, C, C, C> cascade(
+			@NotNull final CommandArgument<A> source,
+			@NotNull final Function<A, @NotNull CommandArgument<B>> transform1,
+			@NotNull final Function<B, @NotNull CommandArgument<C>> transform2
+	) {
+		return CascadeCommandArgument.of(source, transform1, transform2);
+	}
+
+	static <A, B> CascadeCommandArgument<A, B, B, B, B, B> cascade(
+			@NotNull final CommandArgument<A> source,
+			@NotNull final Function<A, @NotNull CommandArgument<B>> transform
+	) {
+		return CascadeCommandArgument.of(source, transform);
+	}
+
 	// --- Special ---------------------------------------------------------
 
 	/**
