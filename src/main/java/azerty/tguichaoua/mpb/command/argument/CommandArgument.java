@@ -23,8 +23,26 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public interface CommandArgument<T> {
+	/**
+	 * Parses the next value.
+	 * <p>
+	 * Should *NOT* be called directly, use {@link CommandExecution#get(CommandArgument)} instead.
+	 *
+	 * @param execution the {@link CommandExecution}
+	 * @return the parsed value
+	 * @throws CommandException if the parsing fail
+	 */
 	T parse(@NotNull CommandExecution execution) throws CommandException;
 
+	/**
+	 * Returns the completion list for this argument.
+	 * <p>
+	 * Should *NOT* be called directly, use {@link CommandExecution#complete(CommandArgument)} instead.
+	 *
+	 * @param execution the {@link CommandExecution}
+	 * @return the completion list
+	 * @throws CommandException if the parsing fail
+	 */
 	default @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
 		execution.next();
 		return Collections.emptyList();
