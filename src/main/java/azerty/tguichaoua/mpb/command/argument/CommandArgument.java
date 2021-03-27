@@ -23,8 +23,26 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public interface CommandArgument<T> {
+	/**
+	 * Parses the next value.
+	 * <p>
+	 * Should *NOT* be called directly, use {@link CommandExecution#get(CommandArgument)} instead.
+	 *
+	 * @param execution the {@link CommandExecution}
+	 * @return the parsed value
+	 * @throws CommandException if the parsing fail
+	 */
 	T parse(@NotNull CommandExecution execution) throws CommandException;
 
+	/**
+	 * Returns the completion list for this argument.
+	 * <p>
+	 * Should *NOT* be called directly, use {@link CommandExecution#complete(CommandArgument)} instead.
+	 *
+	 * @param execution the {@link CommandExecution}
+	 * @return the completion list
+	 * @throws CommandException if the parsing fail
+	 */
 	default @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
 		execution.next();
 		return Collections.emptyList();
@@ -221,7 +239,7 @@ public interface CommandArgument<T> {
 			public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
 				Collection<String> complete = Collections.emptyList();
 				for (int i = amount; i > 0 && execution.remains() != 0; i--) {
-					complete = argument.complete(execution);
+					complete = execution.complete(argument);
 				}
 				return complete;
 			}
@@ -243,7 +261,7 @@ public interface CommandArgument<T> {
 			public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
 				Collection<String> complete = Collections.emptyList();
 				while (execution.remains() != 0) {
-					complete = argument.complete(execution);
+					complete = execution.complete(argument);
 				}
 				return complete;
 			}

@@ -30,18 +30,18 @@ public final class CascadeArgument3<A, B, C> implements CommandArgument<Triplet<
 		if (execution.remains() == 0) return complete;
 
 		execution.checkpoint();
-		complete = A.complete(execution);
+		complete = execution.complete(A);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<B> B = toB.apply(execution.get(A));
 		execution.checkpoint();
-		complete = B.complete(execution);
+		complete = execution.complete(B);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<C> C = toC.apply(execution.get(B));
-		return C.complete(execution);
+		return execution.complete(C);
 	}
 
 	// --- Cascade -------------------------------------------------------

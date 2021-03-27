@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public final class CommandExecution {
 
 	private @Nullable Integer currentParsedArgument = null;
 	@Getter(AccessLevel.PACKAGE) private int currentArg = 0;
-	private final Stack<@NotNull Integer> checkpoints = new Stack<>();
+	private @Nullable Stack<@NotNull Integer> checkpoints = null;
 
 	CommandExecution(
 			@NotNull final CommandSender sender,
@@ -140,15 +141,48 @@ public final class CommandExecution {
 	}
 
 	/**
-	 * Parses and returns the next argument using the {@code parser}.
+	 * Properly calls {@link CommandArgument#parse(CommandExecution)} and returns the result.
 	 *
-	 * @param parser the parser used to parse next argument
-	 * @param <T>    type of the argument
-	 * @return the parsed argument
+	 * @param argument the argument to parse
+	 * @param <T>      type of the argument
+	 * @return the parsed value
 	 * @throws CommandException if the parsing fail
 	 */
-	public <T> T get(final CommandArgument<T> parser) throws CommandException {
-		return parser.parse(this);
+	public <T> T get(final CommandArgument<T> argument) throws CommandException {
+		final Stack<@NotNull Integer> prevCheckpoints = this.checkpoints;
+		final Integer prevCurrentParsedArgument = this.currentParsedArgument;
+
+		this.checkpoints = new Stack<>();
+		this.currentParsedArgument = null;
+
+		try {
+			return argument.parse(this);
+		} finally {
+			this.checkpoints = prevCheckpoints;
+			this.currentParsedArgument = prevCurrentParsedArgument;
+		}
+	}
+
+	/**
+	 * Properly calls {@link CommandArgument#complete(CommandExecution)} and returns the result.
+	 *
+	 * @param argument the argument from which to get the completion list
+	 * @return the completion list
+	 * @throws CommandException if the parsing fail
+	 */
+	public @NotNull Collection<String> complete(@NotNull final CommandArgument<?> argument) throws CommandException {
+		final Stack<@NotNull Integer> prevCheckpoints = this.checkpoints;
+		final Integer prevCurrentParsedArgument = this.currentParsedArgument;
+
+		this.checkpoints = new Stack<>();
+		this.currentParsedArgument = null;
+
+		try {
+			return argument.complete(this);
+		} finally {
+			this.checkpoints = prevCheckpoints;
+			this.currentParsedArgument = prevCurrentParsedArgument;
+		}
 	}
 
 	/**
@@ -189,6 +223,7 @@ public final class CommandExecution {
 	 * Adds a check point at the current location.
 	 */
 	public void checkpoint() {
+		if (checkpoints == null) throw new IllegalStateException();
 		checkpoints.push(currentArg);
 	}
 
@@ -196,6 +231,7 @@ public final class CommandExecution {
 	 * Removes the last check point.
 	 */
 	public void dropCheckpoint() {
+		if (checkpoints == null) throw new IllegalStateException();
 		if (!checkpoints.empty()) checkpoints.pop();
 	}
 
@@ -203,6 +239,7 @@ public final class CommandExecution {
 	 * Removes all check points.
 	 */
 	public void dropAllCheckpoints() {
+		if (checkpoints == null) throw new IllegalStateException();
 		checkpoints.clear();
 	}
 
@@ -210,6 +247,7 @@ public final class CommandExecution {
 	 * Returns at the last check point if exists and remove it.
 	 */
 	public void restore() {
+		if (checkpoints == null) throw new IllegalStateException();
 		if (!checkpoints.empty()) currentArg = checkpoints.pop();
 	}
 
@@ -217,6 +255,7 @@ public final class CommandExecution {
 	 * Returns at the last check point if exists.
 	 */
 	public void back() {
+		if (checkpoints == null) throw new IllegalStateException();
 		if (!checkpoints.empty()) currentArg = checkpoints.peek();
 	}
 }

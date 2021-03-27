@@ -28,10 +28,8 @@ public final class SingleCommand extends MyCommand {
 		Collection<String> completion = Collections.emptyList();
 		try {
 			for (final CommandArgument<?> arg : arguments) {
-				completion = arg.complete(execution);
+				completion = execution.complete(arg);
 				if (execution.remains() == 0) break;
-				execution.endArgument();
-				execution.dropAllCheckpoints();
 			}
 		} catch (final CommandException ignored) {
 			return Collections.emptyList();
