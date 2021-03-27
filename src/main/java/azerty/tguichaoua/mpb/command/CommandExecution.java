@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 
@@ -24,6 +25,7 @@ public final class CommandExecution {
 
 	private @Nullable Integer currentParsedArgument = null;
 	@Getter(AccessLevel.PACKAGE) private int currentArg = 0;
+	private final Stack<@NotNull Integer> checkpoints = new Stack<>();
 
 	CommandExecution(
 			@NotNull final CommandSender sender,
@@ -181,5 +183,40 @@ public final class CommandExecution {
 	 */
 	public CommandException invalidArgument() {
 		return invalidArgument(null);
+	}
+
+	/**
+	 * Adds a check point at the current location.
+	 */
+	public void checkpoint() {
+		checkpoints.push(currentArg);
+	}
+
+	/**
+	 * Removes the last check point.
+	 */
+	public void dropCheckpoint() {
+		if (!checkpoints.empty()) checkpoints.pop();
+	}
+
+	/**
+	 * Removes all check points.
+	 */
+	public void dropAllCheckpoints() {
+		checkpoints.clear();
+	}
+
+	/**
+	 * Returns at the last check point if exists and remove it.
+	 */
+	public void restore() {
+		if (!checkpoints.empty()) currentArg = checkpoints.pop();
+	}
+
+	/**
+	 * Returns at the last check point if exists.
+	 */
+	public void back() {
+		if (!checkpoints.empty()) currentArg = checkpoints.peek();
 	}
 }
