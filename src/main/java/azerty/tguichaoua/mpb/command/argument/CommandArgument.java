@@ -2,6 +2,7 @@ package azerty.tguichaoua.mpb.command.argument;
 
 import azerty.tguichaoua.mpb.command.CommandException;
 import azerty.tguichaoua.mpb.command.CommandExecution;
+import azerty.tguichaoua.mpb.command.argument.cascade.*;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
@@ -54,6 +55,97 @@ public interface CommandArgument<T> {
 				this,
 				(execution, argument) -> execution.remains() == 0 ? defaultValue : execution.get(argument)
 		);
+	}
+
+	// --- To Cascade --------------------------------------------
+	default <B, C, D, E, F, G, H, I, J> CascadeArgument10<T, B, C, D, E, F, G, H, I, J> toCascade(
+			@NotNull final CascadeFunction<T, B> b,
+			@NotNull final CascadeFunction<B, C> c,
+			@NotNull final CascadeFunction<C, D> d,
+			@NotNull final CascadeFunction<D, E> e,
+			@NotNull final CascadeFunction<E, F> f,
+			@NotNull final CascadeFunction<F, G> g,
+			@NotNull final CascadeFunction<G, H> h,
+			@NotNull final CascadeFunction<H, I> i,
+			@NotNull final CascadeFunction<I, J> j
+	) {
+		return CascadeArgument.of(this, b, c, d, e, f, g, h, i, j);
+	}
+
+	default <B, C, D, E, F, G, H, I> CascadeArgument9<T, B, C, D, E, F, G, H, I> toCascade(
+			@NotNull final CascadeFunction<T, B> b,
+			@NotNull final CascadeFunction<B, C> c,
+			@NotNull final CascadeFunction<C, D> d,
+			@NotNull final CascadeFunction<D, E> e,
+			@NotNull final CascadeFunction<E, F> f,
+			@NotNull final CascadeFunction<F, G> g,
+			@NotNull final CascadeFunction<G, H> h,
+			@NotNull final CascadeFunction<H, I> i
+	) {
+		return CascadeArgument.of(this, b, c, d, e, f, g, h, i);
+	}
+
+	default <B, C, D, E, F, G, H> CascadeArgument8<T, B, C, D, E, F, G, H> toCascade(
+			@NotNull final CascadeFunction<T, B> b,
+			@NotNull final CascadeFunction<B, C> c,
+			@NotNull final CascadeFunction<C, D> d,
+			@NotNull final CascadeFunction<D, E> e,
+			@NotNull final CascadeFunction<E, F> f,
+			@NotNull final CascadeFunction<F, G> g,
+			@NotNull final CascadeFunction<G, H> h
+	) {
+		return CascadeArgument.of(this, b, c, d, e, f, g, h);
+	}
+
+	default <B, C, D, E, F, G> CascadeArgument7<T, B, C, D, E, F, G> toCascade(
+			@NotNull final CascadeFunction<T, B> b,
+			@NotNull final CascadeFunction<B, C> c,
+			@NotNull final CascadeFunction<C, D> d,
+			@NotNull final CascadeFunction<D, E> e,
+			@NotNull final CascadeFunction<E, F> f,
+			@NotNull final CascadeFunction<F, G> g
+	) {
+		return CascadeArgument.of(this, b, c, d, e, f, g);
+	}
+
+	default <B, C, D, E, F> CascadeArgument6<T, B, C, D, E, F> toCascade(
+			@NotNull final CascadeFunction<T, B> b,
+			@NotNull final CascadeFunction<B, C> c,
+			@NotNull final CascadeFunction<C, D> d,
+			@NotNull final CascadeFunction<D, E> e,
+			@NotNull final CascadeFunction<E, F> f
+	) {
+		return CascadeArgument.of(this, b, c, d, e, f);
+	}
+
+	default <B, C, D, E> CascadeArgument5<T, B, C, D, E> toCascade(
+			@NotNull final CascadeFunction<T, B> b,
+			@NotNull final CascadeFunction<B, C> c,
+			@NotNull final CascadeFunction<C, D> d,
+			@NotNull final CascadeFunction<D, E> e
+	) {
+		return CascadeArgument.of(this, b, c, d, e);
+	}
+
+	default <B, C, D> CascadeArgument4<T, B, C, D> toCascade(
+			@NotNull final CascadeFunction<T, B> b,
+			@NotNull final CascadeFunction<B, C> c,
+			@NotNull final CascadeFunction<C, D> d
+	) {
+		return CascadeArgument.of(this, b, c, d);
+	}
+
+	default <B, C> CascadeArgument3<T, B, C> toCascade(
+			@NotNull final CascadeFunction<T, B> b,
+			@NotNull final CascadeFunction<B, C> c
+	) {
+		return CascadeArgument.of(this, b, c);
+	}
+
+	default <B> CascadeArgument2<T, B> toCascade(
+			@NotNull final CascadeFunction<T, B> b
+	) {
+		return CascadeArgument.of(this, b);
 	}
 
 	// --- Collections -------------------------------------------
