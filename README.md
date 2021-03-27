@@ -29,7 +29,7 @@
     <dependency>
         <groupId>com.github.tguichaoua</groupId>
         <artifactId>mpb</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </dependency>
 </dependencies>
 ```
