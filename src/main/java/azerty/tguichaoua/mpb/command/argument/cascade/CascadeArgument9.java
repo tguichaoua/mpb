@@ -42,54 +42,54 @@ public final class CascadeArgument9<A, B, C, D, E, F, G, H, I> implements Comman
 		if (execution.remains() == 0) return complete;
 
 		execution.checkpoint();
-		complete = A.complete(execution);
+		complete = execution.complete(A);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<B> B = toB.apply(execution.get(A));
 		execution.checkpoint();
-		complete = B.complete(execution);
+		complete = execution.complete(B);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<C> C = toC.apply(execution.get(B));
 		execution.checkpoint();
-		complete = C.complete(execution);
+		complete = execution.complete(C);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<D> D = toD.apply(execution.get(C));
 		execution.checkpoint();
-		complete = D.complete(execution);
+		complete = execution.complete(D);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<E> E = toE.apply(execution.get(D));
 		execution.checkpoint();
-		complete = E.complete(execution);
+		complete = execution.complete(E);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<F> F = toF.apply(execution.get(E));
 		execution.checkpoint();
-		complete = F.complete(execution);
+		complete = execution.complete(F);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<G> G = toG.apply(execution.get(F));
 		execution.checkpoint();
-		complete = G.complete(execution);
+		complete = execution.complete(G);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<H> H = toH.apply(execution.get(G));
 		execution.checkpoint();
-		complete = H.complete(execution);
+		complete = execution.complete(H);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<I> I = toI.apply(execution.get(H));
-		return I.complete(execution);
+		return execution.complete(I);
 	}
 
 	// --- Cascade -------------------------------------------------------

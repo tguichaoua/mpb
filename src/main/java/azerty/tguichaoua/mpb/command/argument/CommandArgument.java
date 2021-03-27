@@ -221,7 +221,7 @@ public interface CommandArgument<T> {
 			public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
 				Collection<String> complete = Collections.emptyList();
 				for (int i = amount; i > 0 && execution.remains() != 0; i--) {
-					complete = argument.complete(execution);
+					complete = execution.complete(argument);
 				}
 				return complete;
 			}
@@ -243,7 +243,7 @@ public interface CommandArgument<T> {
 			public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
 				Collection<String> complete = Collections.emptyList();
 				while (execution.remains() != 0) {
-					complete = argument.complete(execution);
+					complete = execution.complete(argument);
 				}
 				return complete;
 			}

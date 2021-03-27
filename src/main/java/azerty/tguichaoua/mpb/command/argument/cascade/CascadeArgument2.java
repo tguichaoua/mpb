@@ -28,12 +28,12 @@ public final class CascadeArgument2<A, B> implements CommandArgument<Pair<A, B>>
 		if (execution.remains() == 0) return complete;
 
 		execution.checkpoint();
-		complete = A.complete(execution);
+		complete = execution.complete(A);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<B> B = toB.apply(execution.get(A));
-		return B.complete(execution);
+		return execution.complete(B);
 	}
 
 	// --- Cascade -------------------------------------------------------

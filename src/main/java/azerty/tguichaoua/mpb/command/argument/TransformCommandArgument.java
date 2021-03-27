@@ -19,7 +19,7 @@ public final class TransformCommandArgument<T, R> implements CommandArgument<R> 
 
 	@Override
 	public @NotNull Collection<String> complete(@NotNull final CommandExecution execution) throws CommandException {
-		return source.complete(execution);
+		return execution.complete(source);
 	}
 
 	@FunctionalInterface

@@ -34,30 +34,30 @@ public final class CascadeArgument5<A, B, C, D, E> implements CommandArgument<Qu
 		if (execution.remains() == 0) return complete;
 
 		execution.checkpoint();
-		complete = A.complete(execution);
+		complete = execution.complete(A);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<B> B = toB.apply(execution.get(A));
 		execution.checkpoint();
-		complete = B.complete(execution);
+		complete = execution.complete(B);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<C> C = toC.apply(execution.get(B));
 		execution.checkpoint();
-		complete = C.complete(execution);
+		complete = execution.complete(C);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<D> D = toD.apply(execution.get(C));
 		execution.checkpoint();
-		complete = D.complete(execution);
+		complete = execution.complete(D);
 		if (execution.remains() == 0) return complete;
 		execution.restore();
 
 		final CommandArgument<E> E = toE.apply(execution.get(D));
-		return E.complete(execution);
+		return execution.complete(E);
 	}
 
 	// --- Cascade -------------------------------------------------------
