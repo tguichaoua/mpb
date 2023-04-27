@@ -1,6 +1,7 @@
 # Minecraft Plugin Bootstrap
 
-[![Release](https://jitpack.io/v/tguichaoua/mpb.svg)](https://jitpack.io/#tguichaoua/mbp)
+<span><img alt="unmaintained" src="https://img.shields.io/badge/status-unmaintained-lightgrey?style=for-the-badge" height="20"></span>
+[<img alt="jitpack" src="https://img.shields.io/jitpack/version/com.github.tguichaoua/mpb?style=for-the-badge" height="20" />](https://jitpack.io/#tguichaoua/mpb)
 
 ## Features
 
